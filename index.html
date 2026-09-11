@@ -1,0 +1,383 @@
+<!doctype html>
+<html lang="en">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="light dark">
+<title>Pin Board Weekly</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=B612+Mono:wght@400;700&family=Big+Shoulders+Display:wght@500;700;900&family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;0,6..72,600;1,6..72,400&display=swap">
+<style>
+:root{
+  --paper:#E6E9F2; --page:#F3F5FA; --sunk:#DCE1EE;
+  --ink:#181D2B; --ink-2:#4A5570; --ink-3:#77809B;
+  --rule:#C3CBDF; --rule-2:#AEB8D1;
+  --guilloche:rgba(43,85,163,.07);
+  --gold:#96690F; --green:#227042; --yellow:#9C7A12; --red:#A8332A;
+  --stamp:#2B55A3;
+  --miss:rgba(168,51,42,.09);
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --paper:#101423; --page:#171D30; --sunk:#0C0F1B;
+    --ink:#E7EAF4; --ink-2:#A7B0C9; --ink-3:#7A839F;
+    --rule:#28304A; --rule-2:#353F5E;
+    --guilloche:rgba(140,170,255,.07);
+    --gold:#D7A93F; --green:#4FBE85; --yellow:#D6BC4E; --red:#E4756A;
+    --miss:rgba(228,117,106,.11);
+  }
+}
+:root[data-theme="dark"]{
+  --paper:#101423; --page:#171D30; --sunk:#0C0F1B;
+  --ink:#E7EAF4; --ink-2:#A7B0C9; --ink-3:#7A839F;
+  --rule:#28304A; --rule-2:#353F5E;
+  --guilloche:rgba(140,170,255,.07);
+  --gold:#D7A93F; --green:#4FBE85; --yellow:#D6BC4E; --red:#E4756A;
+  --miss:rgba(228,117,106,.11);
+}
+
+*,*::before,*::after{box-sizing:border-box}
+body{
+  background:var(--paper); color:var(--ink);
+  font-family:"Newsreader",Georgia,"Times New Roman",serif;
+  font-size:16px; line-height:1.6; -webkit-font-smoothing:antialiased;
+}
+.page{max-width:640px; margin:0 auto; padding:0 18px 72px}
+.mono{font-family:"B612 Mono",ui-monospace,Menlo,monospace; font-variant-numeric:tabular-nums}
+:focus-visible{outline:2px solid var(--stamp); outline-offset:3px}
+
+/* ---- document header: the passport data page ---- */
+.doc{
+  position:relative; margin:20px 0 0; padding:20px 20px 22px;
+  background:var(--page); border:1px solid var(--rule); border-radius:3px;
+  /* security guilloche: fine crossed rules, the way a printed document hides
+     a flat tint. Two angles only - enough to read as engine turning. */
+  background-image:
+    repeating-linear-gradient(24deg, var(--guilloche) 0 1px, transparent 1px 7px),
+    repeating-linear-gradient(-24deg, var(--guilloche) 0 1px, transparent 1px 7px);
+}
+.doc-top{
+  display:flex; align-items:baseline; gap:12px;
+  font-family:"B612 Mono",monospace; font-size:10px; font-weight:700;
+  letter-spacing:.22em; text-transform:uppercase; color:var(--ink-3);
+  border-bottom:1px solid var(--rule); padding-bottom:10px;
+}
+.doc-top .no{margin-left:auto; color:var(--ink-2)}
+.wordmark{
+  font-family:"Big Shoulders Display","Arial Narrow",sans-serif; font-weight:900;
+  font-size:clamp(54px,17vw,92px); line-height:.82; letter-spacing:.005em;
+  text-transform:uppercase; margin:16px 0 0; text-wrap:balance;
+}
+.wordmark span{display:block; color:var(--ink)}
+.wordmark .sub{
+  font-size:clamp(15px,4vw,20px); letter-spacing:.34em; font-weight:700;
+  color:var(--stamp); margin-top:10px;
+}
+.fields{display:grid; grid-template-columns:repeat(auto-fit,minmax(124px,1fr));
+  gap:14px 18px; margin:22px 0 0}
+.fields dt{font-family:"B612 Mono",monospace; font-size:9.5px; font-weight:700;
+  letter-spacing:.18em; text-transform:uppercase; color:var(--ink-3)}
+.fields dd{margin:3px 0 0; font-family:"B612 Mono",monospace; font-size:14px;
+  font-variant-numeric:tabular-nums; color:var(--ink)}
+
+/* ---- the stamp ---- */
+.stamp{
+  --rot:0deg; --ink-col:var(--stamp);
+  flex:none; display:grid; place-content:center; gap:2px; text-align:center;
+  color:var(--ink-col); border:2.5px solid var(--ink-col); border-radius:5px;
+  padding:10px 14px; transform:rotate(var(--rot));
+  font-family:"Big Shoulders Display","Arial Narrow",sans-serif;
+  text-transform:uppercase; line-height:1; filter:url(#inked); opacity:.92;
+  box-shadow:inset 0 0 0 1.5px var(--paper), inset 0 0 0 3px var(--ink-col);
+}
+.stamp.round{border-radius:50%; width:132px; height:132px; padding:0}
+.stamp .wk{font-size:11px; font-weight:700; letter-spacing:.2em}
+.stamp .who{font-size:30px; font-weight:900; letter-spacing:.01em; margin:3px 0}
+.stamp .dt{font-family:"B612 Mono",monospace; font-size:9px; letter-spacing:.08em;
+  font-weight:700}
+.stamp.big{--size:1}
+.stamp.big .who{font-size:40px}
+.stamp.big .wk,.stamp.big .dt{font-size:11px}
+
+@keyframes thunk{
+  from{transform:rotate(calc(var(--rot) - 5deg)) scale(1.16); opacity:.55}
+  to{transform:rotate(var(--rot)) scale(1); opacity:.92}
+}
+.stamp.big{animation:thunk .42s cubic-bezier(.2,1.1,.3,1) both}
+@media (prefers-reduced-motion:reduce){ .stamp.big{animation:none} }
+
+/* ---- verdict ---- */
+.verdict{display:flex; align-items:center; gap:20px; flex-wrap:wrap;
+  margin:30px 0 0; padding:24px 0 0; border-top:2px solid var(--ink)}
+.verdict-text{flex:1 1 210px; min-width:0}
+.verdict h2{
+  font-family:"Big Shoulders Display","Arial Narrow",sans-serif; font-weight:900;
+  font-size:clamp(28px,7.5vw,40px); line-height:.95; text-transform:uppercase;
+  margin:0; text-wrap:balance; letter-spacing:.005em;
+}
+.verdict p{margin:10px 0 0; color:var(--ink-2); font-size:16.5px}
+
+/* ---- dispatch ---- */
+.rubric{
+  display:flex; align-items:center; gap:12px; margin:44px 0 0;
+  font-family:"B612 Mono",monospace; font-size:10px; font-weight:700;
+  letter-spacing:.2em; text-transform:uppercase; color:var(--ink-3);
+}
+.rubric::after{content:""; flex:1; height:1px; background:var(--rule)}
+.dispatch{display:flex; flex-direction:column; gap:0; margin:14px 0 0}
+.item{padding:15px 0; border-bottom:1px solid var(--rule)}
+.item:first-child{padding-top:4px}
+.kicker{font-family:"B612 Mono",monospace; font-size:9.5px; font-weight:700;
+  letter-spacing:.18em; text-transform:uppercase; color:var(--tone,var(--ink-3))}
+.item h3{font-family:"Newsreader",Georgia,serif; font-weight:600; font-size:19px;
+  line-height:1.25; margin:5px 0 0; text-wrap:balance}
+.item p{margin:5px 0 0; color:var(--ink-2); font-size:15.5px}
+.tone-good{--tone:var(--green)} .tone-bad{--tone:var(--red)}
+.tone-win{--tone:var(--gold)} .tone-neutral{--tone:var(--ink-3)}
+
+/* ---- the ladder ---- */
+.ladder{margin:14px 0 0; display:flex; flex-direction:column; gap:2px}
+.lane{display:grid; grid-template-columns:auto 1fr auto; align-items:center;
+  gap:10px; padding:9px 0; border-bottom:1px solid var(--rule)}
+.lane.won{background:linear-gradient(90deg,var(--sunk),transparent 72%)}
+.nm{display:flex; align-items:center; gap:7px; min-width:0}
+.nm b{font-family:"Big Shoulders Display",sans-serif; font-weight:700; font-size:21px;
+  text-transform:uppercase; letter-spacing:.02em; white-space:nowrap}
+.nm .pip{width:8px; height:8px; border-radius:50%; flex:none; background:var(--ink-3)}
+.week-strip{display:flex; gap:3px; justify-content:center}
+.cell{
+  width:100%; max-width:30px; aspect-ratio:1/1; border-radius:2px;
+  display:grid; place-content:center; font-family:"B612 Mono",monospace;
+  font-size:10.5px; font-weight:700; color:var(--paper); background:var(--ink-3);
+}
+.cell.miss{background:var(--miss); color:var(--red); border:1px dashed var(--rule-2)}
+.cell.none{background:transparent; border:1px solid var(--rule); color:var(--ink-3)}
+.margin{font-family:"B612 Mono",monospace; font-size:14px; font-weight:700;
+  font-variant-numeric:tabular-nums; text-align:right; min-width:54px}
+.up{color:var(--green)} .down{color:var(--red)} .flat{color:var(--ink-3)}
+.legend{display:flex; flex-wrap:wrap; gap:6px 14px; margin:14px 0 0;
+  font-family:"B612 Mono",monospace; font-size:9.5px; letter-spacing:.1em;
+  text-transform:uppercase; color:var(--ink-3)}
+.legend i{display:inline-block; width:9px; height:9px; border-radius:2px;
+  margin-right:5px; vertical-align:-1px}
+.note{margin:12px 0 0; font-size:14.5px; color:var(--ink-2)}
+
+/* ---- collection ---- */
+.collection{display:flex; flex-wrap:wrap; gap:18px; margin:18px 0 0;
+  padding:20px 14px; background:var(--page); border:1px solid var(--rule);
+  border-radius:3px; justify-content:center; align-items:center}
+.tally{display:flex; flex-wrap:wrap; gap:8px; margin:16px 0 0}
+.tally span{font-family:"B612 Mono",monospace; font-size:12px; font-weight:700;
+  padding:5px 11px; border:1px solid var(--rule-2); border-radius:999px;
+  color:var(--ink-2)}
+.tally span.top{border-color:var(--gold); color:var(--gold)}
+
+/* ---- footer ---- */
+.mrz{margin:34px 0 0; padding:12px 10px; background:var(--sunk);
+  border-radius:3px; overflow-x:auto}
+.mrz code{display:block; font-family:"B612 Mono",monospace; font-size:11px;
+  letter-spacing:.09em; white-space:pre; color:var(--ink-2)}
+.out{display:flex; flex-wrap:wrap; gap:10px 18px; align-items:center; margin:22px 0 0;
+  font-family:"B612 Mono",monospace; font-size:11px; letter-spacing:.1em;
+  text-transform:uppercase}
+.out a{color:var(--stamp); font-weight:700}
+.out .when{color:var(--ink-3); margin-left:auto}
+
+@media (max-width:420px){
+  .page{padding:0 13px 60px}
+  .doc{padding:16px 15px 18px}
+  .lane{grid-template-columns:auto 1fr auto; gap:7px}
+  .nm b{font-size:18px}
+  .cell{font-size:9.5px; max-width:26px}
+  .margin{font-size:12.5px; min-width:46px}
+  .stamp.round{width:112px; height:112px}
+  .stamp.big .who{font-size:32px}
+}
+</style>
+
+<svg width="0" height="0" aria-hidden="true" focusable="false" style="position:absolute">
+  <filter id="inked" x="-12%" y="-12%" width="124%" height="124%">
+    <!-- roughs the edges so the stamps read as pressed ink, not as CSS borders -->
+    <feTurbulence type="fractalNoise" baseFrequency="0.78" numOctaves="3" seed="7" result="n"/>
+    <feDisplacementMap in="SourceGraphic" in2="n" scale="2.4"
+                       xChannelSelector="R" yChannelSelector="G"/>
+  </filter>
+</svg>
+
+<div class="page">
+  <header class="doc">
+    <div class="doc-top"><span id="doc-type">Weekly Edition</span>
+      <span class="no" id="doc-no"></span></div>
+    <h1 class="wordmark"><span>Pin</span><span>Board</span>
+      <span class="sub">Weekly</span></h1>
+    <dl class="fields" id="fields"></dl>
+  </header>
+
+  <section class="verdict">
+    <div id="hero-stamp"></div>
+    <div class="verdict-text"><h2 id="verdict-head"></h2><p id="verdict-body"></p></div>
+  </section>
+
+  <p class="rubric">The Dispatch</p>
+  <div class="dispatch" id="dispatch"></div>
+
+  <p class="rubric" id="ladder-rubric">The Week</p>
+  <div class="ladder" id="ladder"></div>
+  <div class="legend" id="legend"></div>
+  <p class="note" id="ladder-note"></p>
+
+  <div id="live-block"></div>
+
+  <p class="rubric">The Collection</p>
+  <div class="collection" id="collection"></div>
+  <div class="tally" id="tally"></div>
+  <p class="note" id="cup-note"></p>
+
+  <div class="mrz"><code id="mrz"></code></div>
+  <div class="out">
+    <a id="board-link" href="#">Full stats →</a>
+    <span class="when" id="when"></span>
+  </div>
+</div>
+
+<script>
+const ED = {"generated":"2026-09-11T12:26","number":9,"week":{"week":"2026-W36","start":"2026-08-31","end":"2026-09-06","days":7,"dates":["2026-08-31","2026-09-01","2026-09-02","2026-09-03","2026-09-04","2026-09-05","2026-09-06"],"need":3,"winners":["Andy"],"margin":3.7,"standings":[{"player":"Andy","played":7,"dates":["2026-08-31","2026-09-01","2026-09-02","2026-09-03","2026-09-04","2026-09-05","2026-09-06"],"avg":860,"best":942,"adj_avg":17.6,"day_wins":2,"eligible":true},{"player":"Migs","played":7,"dates":["2026-08-31","2026-09-01","2026-09-02","2026-09-03","2026-09-04","2026-09-05","2026-09-06"],"avg":856.3,"best":921,"adj_avg":13.9,"day_wins":1,"eligible":true},{"player":"Matt","played":6,"dates":["2026-08-31","2026-09-01","2026-09-02","2026-09-03","2026-09-04","2026-09-05"],"avg":848.3,"best":886,"adj_avg":6.4,"day_wins":0,"eligible":true},{"player":"Andrew","played":7,"dates":["2026-08-31","2026-09-01","2026-09-02","2026-09-03","2026-09-04","2026-09-05","2026-09-06"],"avg":845.6,"best":919,"adj_avg":3.2,"day_wins":2,"eligible":true},{"player":"Wesley","played":6,"dates":["2026-08-31","2026-09-01","2026-09-02","2026-09-03","2026-09-04","2026-09-05"],"avg":817.7,"best":941,"adj_avg":-24.2,"day_wins":1,"eligible":true},{"player":"Tirso","played":7,"dates":["2026-08-31","2026-09-01","2026-09-02","2026-09-03","2026-09-04","2026-09-05","2026-09-06"],"avg":813,"best":901,"adj_avg":-29.4,"day_wins":1,"eligible":true}],"days_list":["2026-08-31","2026-09-01","2026-09-02","2026-09-03","2026-09-04","2026-09-05","2026-09-06"],"grid":{"Andy":[{"date":"2026-08-31","state":"played","score":827,"adj":61.5,"pins":"🏆🟡🟢🟡🟢","rank":1,"field":6},{"date":"2026-09-01","state":"played","score":911,"adj":5.0,"pins":"🟢🟡🟡🟢🏆","rank":3,"field":6},{"date":"2026-09-02","state":"played","score":855,"adj":-8.0,"pins":"🟢🟡🏆🏆🟡","rank":4,"field":6},{"date":"2026-09-03","state":"played","score":809,"adj":-40.0,"pins":"🟡🟡🟢🟡🟡","rank":6,"field":6},{"date":"2026-09-04","state":"played","score":942,"adj":70.0,"pins":"🏆🏆🟢🟡🏆","rank":1,"field":6},{"date":"2026-09-05","state":"played","score":767,"adj":-29.0,"pins":"🏆🏆🟡🔴🟢","rank":4,"field":6},{"date":"2026-09-06","state":"played","score":909,"adj":64.0,"pins":"🏆🟡🏆🟡🟢","rank":2,"field":4}],"Migs":[{"date":"2026-08-31","state":"played","score":775,"adj":9.5,"pins":"🟢🟡🟢🔴🟢","rank":3,"field":6},{"date":"2026-09-01","state":"played","score":919,"adj":13.0,"pins":"🟢🟡🟡🟢🏆","rank":2,"field":6},{"date":"2026-09-02","state":"played","score":883,"adj":20.0,"pins":"🟡🟢🟡🟢🟡","rank":2,"field":6},{"date":"2026-09-03","state":"played","score":843,"adj":-6.0,"pins":"🟡🟡🟢🟡🟢","rank":5,"field":6},{"date":"2026-09-04","state":"played","score":872,"adj":0.0,"pins":"🏆🏆🟡🟡🟢","rank":3,"field":6},{"date":"2026-09-05","state":"played","score":921,"adj":125.0,"pins":"🟢🟢🟡🟢🟡","rank":1,"field":6},{"date":"2026-09-06","state":"played","score":781,"adj":-64.0,"pins":"🏆🟡🏆🟡🔴","rank":3,"field":4}],"Matt":[{"date":"2026-08-31","state":"played","score":756,"adj":-9.5,"pins":"🟢🟡🟢🔴🟡","rank":4,"field":6},{"date":"2026-09-01","state":"played","score":886,"adj":-20.0,"pins":"🟢🟡🟡🟢🏆","rank":5,"field":6},{"date":"2026-09-02","state":"played","score":871,"adj":8.0,"pins":"🟡🟢🟡🟢🟡","rank":3,"field":6},{"date":"2026-09-03","state":"played","score":848,"adj":-1.0,"pins":"🟡🟢🟡🟡🟢","rank":4,"field":6},{"date":"2026-09-04","state":"played","score":872,"adj":0.0,"pins":"🏆🏆🟡🟡🟢","rank":3,"field":6},{"date":"2026-09-05","state":"played","score":857,"adj":61.0,"pins":"🏆🏆🟡🟢🟡","rank":2,"field":6},{"date":"2026-09-06","state":"missed"}],"Andrew":[{"date":"2026-08-31","state":"played","score":825,"adj":59.5,"pins":"🟢🟡🟢🟡🟢","rank":2,"field":6},{"date":"2026-09-01","state":"played","score":824,"adj":-82.0,"pins":"🟢🟡🟡🟡🏆","rank":6,"field":6},{"date":"2026-09-02","state":"played","score":828,"adj":-35.0,"pins":"🟡🟡🟡🏆🟡","rank":6,"field":6},{"date":"2026-09-03","state":"played","score":888,"adj":39.0,"pins":"🏆🟡🏆🟡🟢","rank":1,"field":6},{"date":"2026-09-04","state":"played","score":810,"adj":-62.0,"pins":"🟢🏆🟢🔴🟢","rank":6,"field":6},{"date":"2026-09-05","state":"played","score":825,"adj":29.0,"pins":"🟢🏆🟢🔴🟢","rank":3,"field":6},{"date":"2026-09-06","state":"played","score":919,"adj":74.0,"pins":"🟡🟡🏆🟡🟢","rank":1,"field":4}],"Wesley":[{"date":"2026-08-31","state":"played","score":714,"adj":-51.5,"pins":"🏆🏆🟢🟡🔴","rank":5,"field":6},{"date":"2026-09-01","state":"played","score":941,"adj":35.0,"pins":"🟢🟡🟡🏆🏆","rank":1,"field":6},{"date":"2026-09-02","state":"played","score":831,"adj":-32.0,"pins":"🟢🟡🟡🏆🟡","rank":5,"field":6},{"date":"2026-09-03","state":"played","score":850,"adj":1.0,"pins":"🟡🟡🟢🟡🟢","rank":3,"field":6},{"date":"2026-09-04","state":"played","score":898,"adj":26.0,"pins":"🏆🟢🟢🟡🟢","rank":2,"field":6},{"date":"2026-09-05","state":"played","score":672,"adj":-124.0,"pins":"🟡🏆🟡🔴🟡","rank":6,"field":6},{"date":"2026-09-06","state":"missed"}],"Tirso":[{"date":"2026-08-31","state":"played","score":690,"adj":-75.5,"pins":"🟢🟡🟢🟡🔴","rank":6,"field":6},{"date":"2026-09-01","state":"played","score":901,"adj":-5.0,"pins":"🟢🟡🟡🟢🏆","rank":4,"field":6},{"date":"2026-09-02","state":"played","score":888,"adj":25.0,"pins":"🟢🟡🟢🏆🟡","rank":1,"field":6},{"date":"2026-09-03","state":"played","score":878,"adj":29.0,"pins":"🏆🟡🟢🟡🟢","rank":2,"field":6},{"date":"2026-09-04","state":"played","score":814,"adj":-58.0,"pins":"🏆🏆🟡🟡🏆","rank":5,"field":6},{"date":"2026-09-05","state":"played","score":752,"adj":-44.0,"pins":"🏆🟢🟡🔴🟢","rank":5,"field":6},{"date":"2026-09-06","state":"played","score":768,"adj":-77.0,"pins":"🏆🟡🏆🟡🔴","rank":4,"field":4}]}},"live":{"week":"2026-W37","start":"2026-09-07","end":"2026-09-13","days":5,"dates":["2026-09-07","2026-09-08","2026-09-09","2026-09-10","2026-09-11"],"need":3,"winners":["Andy"],"margin":18.6,"standings":[{"player":"Andy","played":4,"dates":["2026-09-07","2026-09-09","2026-09-10","2026-09-11"],"avg":905.2,"best":987,"adj_avg":22.9,"day_wins":3,"eligible":true},{"player":"Tirso","played":5,"dates":["2026-09-07","2026-09-08","2026-09-09","2026-09-10","2026-09-11"],"avg":891.2,"best":982,"adj_avg":4.3,"day_wins":2,"eligible":true},{"player":"Wesley","played":3,"dates":["2026-09-07","2026-09-09","2026-09-10"],"avg":900,"best":932,"adj_avg":2.8,"day_wins":0,"eligible":true},{"player":"Migs","played":5,"dates":["2026-09-07","2026-09-08","2026-09-09","2026-09-10","2026-09-11"],"avg":870.8,"best":943,"adj_avg":-16.1,"day_wins":0,"eligible":true},{"player":"Andrew","played":4,"dates":["2026-09-07","2026-09-08","2026-09-09","2026-09-10"],"avg":869.8,"best":936,"adj_avg":-29.4,"day_wins":0,"eligible":true},{"player":"Matt","played":4,"dates":["2026-09-07","2026-09-09","2026-09-10","2026-09-11"],"avg":848.5,"best":977,"adj_avg":-33.9,"day_wins":0,"eligible":true}],"number":10,"days_list":["2026-09-07","2026-09-08","2026-09-09","2026-09-10","2026-09-11","2026-09-12","2026-09-13"],"grid":{"Andy":[{"date":"2026-09-07","state":"played","score":908,"adj":28.5,"pins":"🟡🏆🟡🏆🏆","rank":1,"field":6},{"date":"2026-09-08","state":"missed"},{"date":"2026-09-09","state":"played","score":987,"adj":27.0,"pins":"🏆🟢🟢🏆🏆","rank":1,"field":6},{"date":"2026-09-10","state":"played","score":814,"adj":-38.0,"pins":"🟡🏆🟡🏆🟡","rank":5,"field":6},{"date":"2026-09-11","state":"played","score":912,"adj":74.0,"pins":"🟡🏆🟡🏆🟢","rank":1,"field":4},{"date":"2026-09-12","state":"none"},{"date":"2026-09-13","state":"none"}],"Tirso":[{"date":"2026-09-07","state":"played","score":763,"adj":-116.5,"pins":"🟡🟢🟡🔴🟢","rank":6,"field":6},{"date":"2026-09-08","state":"played","score":929,"adj":24,"pins":"🟢🏆🟢🟡🟢","rank":1,"field":3},{"date":"2026-09-09","state":"played","score":982,"adj":22.0,"pins":"🏆🟢🏆🏆🟢","rank":2,"field":6},{"date":"2026-09-10","state":"played","score":914,"adj":62.0,"pins":"🟢🟢🟢🟡🟡","rank":1,"field":6},{"date":"2026-09-11","state":"played","score":868,"adj":30.0,"pins":"🟡🏆🟡🏆🟡","rank":2,"field":4},{"date":"2026-09-12","state":"none"},{"date":"2026-09-13","state":"none"}],"Wesley":[{"date":"2026-09-07","state":"played","score":905,"adj":25.5,"pins":"🟡🟡🟡🟢🟢","rank":2,"field":6},{"date":"2026-09-08","state":"missed"},{"date":"2026-09-09","state":"played","score":932,"adj":-28.0,"pins":"🏆🟢🟢🟡🟢","rank":6,"field":6},{"date":"2026-09-10","state":"played","score":863,"adj":11.0,"pins":"🟡🟡🟡🏆🟡","rank":3,"field":6},{"date":"2026-09-11","state":"missed"},{"date":"2026-09-12","state":"none"},{"date":"2026-09-13","state":"none"}],"Migs":[{"date":"2026-09-07","state":"played","score":891,"adj":11.5,"pins":"🟢🟢🟡🟢🟡","rank":3,"field":6},{"date":"2026-09-08","state":"played","score":905,"adj":0,"pins":"🟡🏆🟢🟡🏆","rank":2,"field":3},{"date":"2026-09-09","state":"played","score":943,"adj":-17.0,"pins":"🏆🟡🟡🏆🟢","rank":4,"field":6},{"date":"2026-09-10","state":"played","score":807,"adj":-45.0,"pins":"🟡🟡🟡🟡🟡","rank":6,"field":6},{"date":"2026-09-11","state":"played","score":808,"adj":-30.0,"pins":"🟡🟡🟡🏆🟡","rank":3,"field":4},{"date":"2026-09-12","state":"none"},{"date":"2026-09-13","state":"none"}],"Andrew":[{"date":"2026-09-07","state":"played","score":868,"adj":-11.5,"pins":"🟢🟡🟡🟡🏆","rank":4,"field":6},{"date":"2026-09-08","state":"played","score":834,"adj":-71,"pins":"🟡🏆🟡🟡🏆","rank":3,"field":3},{"date":"2026-09-09","state":"played","score":936,"adj":-24.0,"pins":"🏆🟡🟡🏆🟢","rank":5,"field":6},{"date":"2026-09-10","state":"played","score":841,"adj":-11.0,"pins":"🟡🟡🟡🟢🟡","rank":4,"field":6},{"date":"2026-09-11","state":"missed"},{"date":"2026-09-12","state":"none"},{"date":"2026-09-13","state":"none"}],"Matt":[{"date":"2026-09-07","state":"played","score":809,"adj":-70.5,"pins":"🟢🟡🟡🟢🟡","rank":5,"field":6},{"date":"2026-09-08","state":"missed"},{"date":"2026-09-09","state":"played","score":977,"adj":17.0,"pins":"🏆🟡🏆🏆🟢","rank":3,"field":6},{"date":"2026-09-10","state":"played","score":876,"adj":24.0,"pins":"🟢🏆🟡🟢🟡","rank":2,"field":6},{"date":"2026-09-11","state":"played","score":732,"adj":-106.0,"pins":"🟡🏆🟡🏆🔴","rank":4,"field":4},{"date":"2026-09-12","state":"none"},{"date":"2026-09-13","state":"none"}]}},"stories":[{"kicker":"Week 9","headline":"Andy takes Week 9","body":"+17.6 a day against the median across 7 days, 2 of them won outright.","player":"Andy","tone":"win"},{"kicker":"Round of the week","headline":"Andy goes big","body":"942 on Friday, 3 of five pins perfect.","player":"Andy","tone":"good"},{"kicker":"Best day out","headline":"Migs's Saturday","body":"921, +125.0 over the median. Everyone else was looking at the same map.","player":"Migs","tone":"good"},{"kicker":"Form","headline":"Migs is heating up","body":"+12.5 a day better than their season average. Something has clicked.","player":"Migs","tone":"good"},{"kicker":"Rough day","headline":"Wesley's Saturday","body":"672, -124.0 against the median.","player":"Wesley","tone":"bad"}],"stamps":[{"week":"2026-W36","number":9,"start":"2026-08-31","end":"2026-09-06","winners":["Andy"],"margin":3.7,"adj":17.6,"ink":"#2B55A3","rot":-2.21,"shape":"round"},{"week":"2026-W35","number":8,"start":"2026-08-24","end":"2026-08-30","winners":["Andrew"],"margin":27.2,"adj":38.1,"ink":"#2F7A4F","rot":0.68,"shape":"box"},{"week":"2026-W34","number":7,"start":"2026-08-17","end":"2026-08-23","winners":["Andy"],"margin":8.1,"adj":11.4,"ink":"#B3342B","rot":-5.61,"shape":"box"},{"week":"2026-W33","number":6,"start":"2026-08-10","end":"2026-08-16","winners":["Andy"],"margin":21.0,"adj":29.3,"ink":"#5B3E96","rot":-2.19,"shape":"round"},{"week":"2026-W32","number":5,"start":"2026-08-03","end":"2026-08-09","winners":["Matt"],"margin":16.7,"adj":41.9,"ink":"#8C2E6B","rot":2.57,"shape":"box"},{"week":"2026-W31","number":4,"start":"2026-07-27","end":"2026-08-02","winners":["Andrew"],"margin":3.5,"adj":4.5,"ink":"#8A4A16","rot":0.86,"shape":"box"},{"week":"2026-W30","number":3,"start":"2026-07-20","end":"2026-07-26","winners":["Matt"],"margin":40.9,"adj":50.5,"ink":"#2B55A3","rot":-0.67,"shape":"round"},{"week":"2026-W29","number":2,"start":"2026-07-13","end":"2026-07-19","winners":["Andy"],"margin":17.7,"adj":18.7,"ink":"#2F7A4F","rot":-3.58,"shape":"box"}],"cup":[["Andy",4],["Matt",2],["Andrew",2]],"season":{"leader":"Andy","adj":14.9,"avg":857.7,"days":58,"first":"2026-07-11","last":"2026-09-11"},"board_url":"./board.html","weekly_url":"./index.html"};
+const W = ED.week;
+
+const short = d => new Date(d + 'T12:00:00')
+  .toLocaleDateString('en-US', {month:'short', day:'numeric'});
+const fmt = n => n.toLocaleString('en-US');
+const sign = n => (n > 0 ? '+' : '') + n;
+const el = h => { const t = document.createElement('template');
+  t.innerHTML = h.trim(); return t.content; };
+
+/* score bands, same thresholds the main board uses for its last-5 pips */
+const band = s => s >= 950 ? 'var(--gold)' : s >= 880 ? 'var(--green)'
+  : s >= 800 ? 'var(--yellow)' : 'var(--red)';
+
+function stamp(s, big) {
+  const name = s.winners.join(' & ');
+  const cls = `stamp ${s.shape === 'round' ? 'round' : ''} ${big ? 'big' : ''}`;
+  return `<div class="${cls}" style="--rot:${s.rot}deg;--ink-col:${s.ink}"
+       role="img" aria-label="Week ${s.number}: ${name}, ${sign(s.adj)} a day">
+    <div class="wk">Week ${s.number}</div>
+    <div class="who">${name}</div>
+    <div class="dt">${short(s.start)} – ${short(s.end)}</div>
+    <div class="dt">${s.adj === null ? '' : sign(s.adj) + ' / day'}</div>
+  </div>`;
+}
+
+/* ---------- header ---------- */
+document.getElementById('doc-no').textContent =
+  `No. ${String(ED.number).padStart(2, '0')}`;
+document.getElementById('fields').innerHTML = [
+  ['Period', `${short(W.start)} – ${short(W.end)}`],
+  ['Puzzles', `${W.days} of 7`],
+  ['Players', W.standings.length],
+  ['Season', `${ED.season.days} days`],
+].map(([k, v]) => `<div><dt>${k}</dt><dd>${v}</dd></div>`).join('');
+
+/* ---------- the verdict ---------- */
+const champ = ED.stamps.find(s => s.week === W.week);
+document.getElementById('hero-stamp').innerHTML = champ ? stamp(champ, true) : '';
+document.getElementById('verdict-head').textContent = ED.stories[0].headline;
+document.getElementById('verdict-body').textContent = ED.stories[0].body;
+
+/* ---------- dispatch ---------- */
+document.getElementById('dispatch').innerHTML = ED.stories.slice(1).map(s => `
+  <article class="item tone-${s.tone || 'neutral'}">
+    <div class="kicker">${s.kicker}</div>
+    <h3>${s.headline}</h3>
+    <p>${s.body}</p>
+  </article>`).join('');
+
+/* ---------- the ladder ---------- */
+function ladder(week, into) {
+  const rows = week.standings.map(r => {
+    const cells = week.grid[r.player].map(c => {
+      if (c.state === 'none')
+        return `<div class="cell none" title="${short(c.date)}: no puzzle">·</div>`;
+      if (c.state === 'missed')
+        return `<div class="cell miss" title="${short(c.date)}: no show">×</div>`;
+      return `<div class="cell" style="background:${band(c.score)}"
+        title="${short(c.date)}: ${fmt(c.score)}, ${c.rank} of ${c.field}">${c.rank}</div>`;
+    }).join('');
+    const m = r.adj_avg;
+    const cls = m === null ? 'flat' : m > 0 ? 'up' : m < 0 ? 'down' : 'flat';
+    return `<div class="lane ${week.winners.includes(r.player) ? 'won' : ''}">
+      <div class="nm">
+        <span class="pip" style="background:${
+          week.winners.includes(r.player) ? 'var(--gold)' : 'var(--ink-3)'}"></span>
+        <b>${r.player}</b>
+      </div>
+      <div class="week-strip">${cells}</div>
+      <div class="margin ${cls}">${m === null ? '–' : sign(m)}</div>
+    </div>`;
+  }).join('');
+  document.getElementById(into).innerHTML = rows;
+}
+ladder(W, 'ladder');
+
+document.getElementById('ladder-rubric').textContent =
+  `The Week · ${short(W.start)} – ${short(W.end)}`;
+document.getElementById('legend').innerHTML = [
+  ['var(--gold)', '950+'], ['var(--green)', '880+'],
+  ['var(--yellow)', '800+'], ['var(--red)', 'under 800'],
+].map(([c, t]) => `<span><i style="background:${c}"></i>${t}</span>`).join('')
+  + `<span><i style="border:1px dashed var(--rule-2)"></i>no show</span>`;
+document.getElementById('ladder-note').innerHTML =
+  `Each square is a day, Monday to Sunday; the number is where they finished that day.
+   The figure on the right is the average margin over the median score of everyone
+   who played the same puzzle — the week is won on that, so a day of brutal maps
+   can't flatter whoever happened to show up for it.`;
+
+/* ---------- still in play ---------- */
+if (ED.live && ED.live.standings.length) {
+  const L = ED.live;
+  document.getElementById('live-block').innerHTML = `
+    <p class="rubric">Still in play · Week ${L.number}</p>
+    <div class="ladder" id="live-ladder"></div>
+    <p class="note">${L.days} ${L.days === 1 ? 'day' : 'days'} in.
+      ${L.winners.length
+        ? `<b>${L.winners.join(' & ')}</b> would take it on today's numbers.`
+        : 'Nobody has the days in to claim it yet.'}</p>`;
+  ladder(L, 'live-ladder');
+}
+
+/* ---------- the collection ---------- */
+document.getElementById('collection').innerHTML =
+  ED.stamps.map(s => stamp(s, false)).join('');
+const mostStamps = ED.cup.length ? ED.cup[0][1] : 0;
+document.getElementById('tally').innerHTML = ED.cup
+  .map(([p, n]) => `<span class="${n === mostStamps ? 'top' : ''}">${p} ${n}</span>`).join('');
+document.getElementById('cup-note').textContent =
+  `${ED.cup.length ? ED.cup[0][0] : '—'} leads the collection with ${mostStamps} of `
+  + `${ED.stamps.length} weeks stamped. A player needs three days in a week to `
+  + `be eligible for it, so one lucky appearance can't take a stamp.`;
+
+/* ---------- machine-readable strip ---------- */
+/* Real fields, in the layout a passport uses: document line, then the holder
+   line. It encodes the week, the winner and the margin - nothing invented. */
+const pad = (s, n, c) => String(s).toUpperCase().replace(/[^A-Z0-9]/g, '<')
+  .padEnd(n, c || '<').slice(0, n);
+const champName = champ ? champ.winners.join('') : 'NOBODY';
+/* the strip has no room for a sign or a decimal point, so the margin goes in
+   the way a passport encodes one: a letter for the sign, then zero-padded */
+const mrzAdj = n => (n >= 0 ? 'P' : 'M') +
+  String(Math.round(Math.abs(n) * 10)).padStart(5, '0');
+const mrzDate = d => new Date(d + 'T12:00:00').toLocaleDateString('en-GB',
+  {day: '2-digit', month: '2-digit', year: '2-digit'}).replace(/\//g, '');
+document.getElementById('mrz').textContent =
+  `P<PINBOARD<<${pad(champName, 28)}\n` +
+  `W${String(ED.number).padStart(2, '0')}<${mrzDate(W.start)}<${mrzDate(W.end)}<` +
+  pad(`${W.days}D${W.standings.length}P`, 12) + '<' + mrzAdj(champ ? champ.adj : 0);
+
+/* ---------- footer ---------- */
+const link = document.getElementById('board-link');
+link.href = ED.board_url;
+document.getElementById('when').textContent =
+  'Issued ' + new Date(ED.generated).toLocaleDateString('en-US',
+    {month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit'});
+</script>
+
+</html>
