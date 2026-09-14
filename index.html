@@ -3,14 +3,11 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="color-scheme" content="light dark">
-<title>Pin Board Weekly</title>
+<title>The Pin Board</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=IBM+Plex+Mono:wght@400;500;600&family=Public+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap">
 <style>
-/* Same palette and type as the full board (template.html) on purpose: this is
-   the page people actually get sent, so it should feel like the same product
-   as the one it links out to, not a separate brand. */
 :root{
   --ground:#E9EBE6; --panel:#FCFDFB; --panel-2:#F0F2ED; --sunk:#DFE2DB;
   --ink:#14181C; --ink-2:#464D55; --ink-3:#727A83; --rule:#D2D6CE; --rule-2:#C2C7BC;
@@ -18,6 +15,7 @@
   --gold:#A8781A; --green:#2C8450; --yellow:#B9932A; --red:#B23C31;
   --miss:#C4B0AB; --miss-bg:rgba(178,60,49,.10);
   --p-Andrew:#3646C6; --p-Andy:#0A8B99; --p-Matt:#7B41C0; --p-Migs:#A9631F; --p-Tirso:#C93472; --p-Wesley:#1E8A65;
+  --shadow:0 1px 2px rgba(20,24,28,.06), 0 8px 24px -18px rgba(20,24,28,.5);
 }
 :root:not([data-theme="light"]) { color-scheme: light dark; }
 @media (prefers-color-scheme: dark){
@@ -28,6 +26,7 @@
     --gold:#DCAE4C; --green:#4EBB77; --yellow:#DEC456; --red:#E06A5F;
     --miss:#4A3B39; --miss-bg:rgba(224,106,95,.10);
     --p-Andrew:#8497FF; --p-Andy:#2FC0CD; --p-Matt:#B387EE; --p-Migs:#DD9F58; --p-Tirso:#F0709F; --p-Wesley:#4BCE9E;
+    --shadow:0 1px 2px rgba(0,0,0,.4), 0 10px 30px -20px #000;
   }
 }
 :root[data-theme="dark"]{
@@ -37,134 +36,1079 @@
   --gold:#DCAE4C; --green:#4EBB77; --yellow:#DEC456; --red:#E06A5F;
   --miss:#4A3B39; --miss-bg:rgba(224,106,95,.10);
   --p-Andrew:#8497FF; --p-Andy:#2FC0CD; --p-Matt:#B387EE; --p-Migs:#DD9F58; --p-Tirso:#F0709F; --p-Wesley:#4BCE9E;
+  --shadow:0 1px 2px rgba(0,0,0,.4), 0 10px 30px -20px #000;
 }
 
-*,*::before,*::after{box-sizing:border-box}
 body{background:var(--ground); color:var(--ink);
   font-family:"Public Sans","Helvetica Neue",Helvetica,Arial,sans-serif; font-size:15px; line-height:1.55;
   -webkit-font-smoothing:antialiased;}
+*,*::before,*::after{box-sizing:border-box}
 .mono{font-family:"IBM Plex Mono",ui-monospace,Menlo,monospace; font-variant-numeric:tabular-nums}
-.wrap{max-width:480px; margin:0 auto; padding:28px 18px 56px}
+.wrap{max-width:1080px; margin:0 auto; padding:0 22px 110px}
 :focus-visible{outline:2px solid var(--accent); outline-offset:2px; border-radius:2px}
 
-.eyebrow{display:flex; align-items:center; gap:9px; flex-wrap:wrap;
-  font-size:11px; font-weight:600; letter-spacing:.14em; text-transform:uppercase; color:var(--ink-3)}
-.pill{font-size:10px; font-weight:700; letter-spacing:.1em; padding:3px 9px; border-radius:999px}
-.pill.live{background:var(--accent-soft); color:var(--accent)}
-.pill.final{background:var(--sunk); color:var(--ink-2)}
-
+/* masthead */
+.masthead{padding:46px 0 0}
+.eyebrow{font-size:11px; font-weight:600; letter-spacing:.16em; text-transform:uppercase; color:var(--ink-3);
+  display:flex; gap:10px; align-items:center; flex-wrap:wrap}
+.eyebrow a{color:var(--accent); text-decoration:none; border-bottom:1px solid var(--accent-soft)}
+.scope-tag{display:inline-block; font-size:10px; font-weight:700; letter-spacing:.1em;
+  background:var(--accent-soft); color:var(--accent); padding:3px 9px; border-radius:999px; margin-right:8px}
 .wordmark{font-family:"Archivo Black","Archivo",Impact,sans-serif; font-weight:400;
-  font-size:clamp(30px,9vw,42px); line-height:.95; letter-spacing:-.02em; text-transform:uppercase;
-  margin:10px 0 0; text-wrap:balance}
+  font-size:clamp(46px,10.5vw,104px); line-height:.86; letter-spacing:-.035em; text-transform:uppercase;
+  margin:14px 0 0; text-wrap:balance}
+.deck{margin:16px 0 0; max-width:60ch; color:var(--ink-2); font-size:16.5px}
+.strip{display:grid; grid-template-columns:repeat(auto-fit,minmax(132px,1fr)); gap:1px;
+  background:var(--rule); border:1px solid var(--rule); margin:34px 0 0; border-radius:3px; overflow:hidden}
+.strip div{background:var(--panel); padding:13px 15px}
+.strip dt{font-size:10.5px; font-weight:600; letter-spacing:.13em; text-transform:uppercase; color:var(--ink-3)}
+.strip dd{margin:5px 0 0; font-family:"IBM Plex Mono",monospace; font-variant-numeric:tabular-nums;
+  font-size:21px; font-weight:600; letter-spacing:-.02em}
+.today{display:flex; flex-wrap:wrap; align-items:center; gap:9px; margin:16px 0 0; padding:13px 15px;
+  background:var(--panel); border:1px solid var(--rule); border-left:3px solid var(--accent); border-radius:4px}
+.today .hd{font-size:10.5px; font-weight:700; letter-spacing:.13em; text-transform:uppercase;
+  color:var(--ink-3); margin-right:4px}
+.status{display:inline-flex; align-items:center; gap:7px; font-size:13.5px; font-weight:600;
+  padding:4px 11px; border-radius:999px; border:1px solid var(--rule-2)}
+.status.in{color:var(--ink-2)}
+.status.out{color:var(--red); border-color:var(--red); background:var(--miss-bg)}
+.status .sc{font-family:"IBM Plex Mono",monospace; font-weight:500; opacity:.75}
+.strip dd small{font-size:12px; font-weight:400; color:var(--ink-3); letter-spacing:0}
 
-.headline{margin:14px 0 0; font-size:17px; color:var(--ink-2); max-width:44ch}
-.headline b{color:var(--ink); font-weight:700}
+/* sections */
+section{margin:62px 0 0}
+.sec-head{display:flex; align-items:baseline; gap:14px; border-bottom:2px solid var(--ink); padding-bottom:8px}
+h2{font-family:"Archivo Black",sans-serif; font-weight:400; font-size:19px; letter-spacing:-.01em;
+  text-transform:uppercase; margin:0}
+.sec-note{font-size:12.5px; color:var(--ink-3); margin-left:auto; text-align:right}
+.tabs{display:flex; gap:4px; margin-left:16px}
+.tabs button{font-family:"Public Sans",sans-serif; font-size:11.5px; font-weight:600; letter-spacing:.06em;
+  text-transform:uppercase; color:var(--ink-3); background:transparent; border:1px solid transparent;
+  padding:4px 10px; border-radius:999px; cursor:pointer}
+.tabs button:hover{color:var(--ink)}
+.tabs button[aria-pressed="true"]{background:var(--ink); color:var(--ground); border-color:var(--ink)}
+.blurb{color:var(--ink-2); font-size:14px; margin:14px 0 0; max-width:70ch}
 
-table{width:100%; border-collapse:collapse; margin:24px 0 0; table-layout:fixed}
-th{font-size:9.5px; font-weight:600; letter-spacing:.08em; text-transform:uppercase; color:var(--ink-3);
-  text-align:center; padding:0 2px 8px; border-bottom:1px solid var(--rule-2)}
-th.l{text-align:left}
-th.net{text-align:right}
-td{padding:9px 2px; border-bottom:1px solid var(--rule); vertical-align:middle}
-tr:last-child td{border-bottom:none}
-tr.won{background:linear-gradient(90deg,var(--panel-2),transparent 85%)}
+/* weekly cup */
+.cup{display:flex; flex-wrap:wrap; gap:9px; margin:18px 0 0}
+.cup .t{display:inline-flex; align-items:center; gap:9px; background:var(--panel);
+  border:1px solid var(--rule); border-radius:999px; padding:7px 15px 7px 12px;
+  font-size:14px; font-weight:600}
+.cup .t b{font-family:"IBM Plex Mono",monospace; font-variant-numeric:tabular-nums; font-size:17px}
+.cup .t.lead{border-color:var(--gold); background:var(--panel-2)}
+.cup .t.zero{color:var(--ink-3)}
+td.wk,td.win{font-family:"Public Sans",sans-serif; font-weight:600}
+td.win{font-weight:700}
+tr.live td{background:var(--accent-soft)}
+.live-tag{font-family:"Public Sans",sans-serif; font-size:10px; font-weight:700; letter-spacing:.1em;
+  text-transform:uppercase; color:var(--accent); margin-left:8px}
 
-.rank{font-family:"IBM Plex Mono",monospace; font-size:13px; color:var(--ink-3);
-  width:1%; padding-right:2px; text-align:center}
-.who{display:flex; align-items:center; gap:7px; white-space:nowrap}
-.dot{width:8px; height:8px; border-radius:50%; flex:none}
-.who b{font-weight:600; font-size:14px}
+/* tables */
+.scroll{overflow-x:auto; margin:18px 0 0}
+table{width:100%; border-collapse:collapse; min-width:660px}
+th{font-size:10.5px; font-weight:600; letter-spacing:.11em; text-transform:uppercase; color:var(--ink-3);
+  text-align:right; padding:0 10px 9px; white-space:nowrap; border-bottom:1px solid var(--rule-2)}
+th.l,td.l{text-align:left}
+td{padding:11px 10px; border-bottom:1px solid var(--rule); text-align:right; white-space:nowrap;
+  font-family:"IBM Plex Mono",monospace; font-variant-numeric:tabular-nums; font-size:14px}
+tbody tr{transition:background .12s}
+tbody tr[data-player]{cursor:pointer}
+tbody tr.on{background:var(--accent-soft)}
+.rank{font-family:"Archivo Black",sans-serif; font-size:22px; width:1%; color:var(--ink-3); letter-spacing:-.03em}
+tr.lead .rank{color:var(--gold)}
+.who{font-family:"Public Sans",sans-serif; font-weight:600; font-size:15.5px; display:flex; align-items:center; gap:9px}
+.dot{width:9px; height:9px; border-radius:50%; flex:none}
+.avg{font-size:17px; font-weight:600}
+.bar{height:4px; background:var(--sunk); border-radius:2px; margin-top:6px; overflow:hidden}
+.bar i{display:block; height:100%; border-radius:2px}
+.muted{color:var(--ink-3)}
+.sub{font-size:11.5px; color:var(--ink-3); font-family:"Public Sans",sans-serif; letter-spacing:.02em}
+.divider td{border-bottom:none; padding-top:16px}
+.divider span{font-size:11px; letter-spacing:.12em; text-transform:uppercase; color:var(--ink-3);
+  font-family:"Public Sans",sans-serif; display:block; border-top:1px dashed var(--rule-2); padding-top:14px}
+.pips{display:inline-flex; gap:3px}
+.pips b{width:15px; height:15px; border-radius:2px; display:block}
+.pts{font-size:17px; font-weight:700}
+.form{display:inline-flex; gap:3px}
+.form span{width:18px; height:18px; border-radius:3px; display:grid; place-content:center;
+  font-family:"IBM Plex Mono",monospace; font-size:9.5px; font-weight:700; color:var(--panel)}
+.form .w{background:var(--green)} .form .d{background:var(--ink-3)} .form .l{background:var(--red)}
+.form .n{background:transparent; color:var(--red); border:1px dashed var(--rule-2)}
+.warn{color:var(--red)}
 
-.sq{width:100%; max-width:26px; aspect-ratio:1/1; margin:0 auto; border-radius:3px;
-  display:grid; place-content:center; font-family:"IBM Plex Mono",monospace;
-  font-size:9px; font-weight:600; color:var(--panel)}
-.sq.miss{background:var(--miss-bg); color:var(--red); border:1px dashed var(--rule-2)}
-.sq.none{background:transparent; border:1px solid var(--rule)}
+/* chart */
+.story{margin:22px 0 0; max-width:66ch; font-size:16.5px; line-height:1.68; color:var(--ink-2)}
+.story p{margin:0 0 17px}
+.story p:first-of-type::first-letter{font-family:"Archivo Black",sans-serif; float:left; font-size:58px;
+  line-height:.82; padding:5px 11px 0 0; color:var(--ink)}
+.story b{color:var(--ink); font-weight:600}
+.story .num{font-family:"IBM Plex Mono",monospace; font-variant-numeric:tabular-nums; color:var(--ink);
+  font-weight:600}
+.pull{margin:26px 0; padding:0 0 0 20px; border-left:3px solid var(--red);
+  font-family:"Archivo Black",sans-serif; font-size:21px; line-height:1.28; color:var(--ink);
+  letter-spacing:-.015em; text-wrap:balance}
+.dossier{margin:30px 0 0; border:1px solid var(--rule); border-radius:4px; overflow:hidden}
+.dossier .top{background:var(--miss-bg); border-bottom:1px solid var(--rule); padding:13px 17px;
+  display:flex; align-items:baseline; gap:12px; flex-wrap:wrap}
+.dossier .top h3{margin:0; font-family:"Archivo Black",sans-serif; font-weight:400; font-size:17px;
+  text-transform:uppercase; letter-spacing:-.01em; color:var(--red)}
+.dossier .top span{font-size:12.5px; color:var(--ink-3)}
+.dossier ul{margin:0; padding:0; list-style:none}
+.dossier li{display:grid; grid-template-columns:130px 1fr; gap:16px; padding:12px 17px;
+  border-bottom:1px solid var(--rule); align-items:baseline; font-size:14px}
+.dossier li:last-child{border-bottom:none}
+.dossier .stat{font-family:"IBM Plex Mono",monospace; font-variant-numeric:tabular-nums; font-weight:600;
+  font-size:16px; color:var(--red)}
+.dossier .stat small{display:block; font-family:"Public Sans",sans-serif; font-size:10px; font-weight:600;
+  letter-spacing:.11em; text-transform:uppercase; color:var(--ink-3); margin-top:3px}
+@media (max-width:560px){ .dossier li{grid-template-columns:1fr; gap:4px} }
+.chart-card{background:var(--panel); border:1px solid var(--rule); border-radius:4px; padding:18px 16px 12px;
+  margin:18px 0 0; box-shadow:var(--shadow)}
+.legend{display:flex; flex-wrap:wrap; gap:7px; margin:14px 0 0}
+.chip{display:inline-flex; align-items:center; gap:7px; border:1px solid var(--rule-2); background:var(--panel-2);
+  color:var(--ink-2); border-radius:999px; padding:5px 12px 5px 9px; font-size:12.5px; font-weight:600;
+  cursor:pointer; font-family:"Public Sans",sans-serif}
+.chip.on{background:var(--ink); color:var(--ground); border-color:var(--ink)}
+.chip.on .dot{box-shadow:0 0 0 2px var(--ground)}
+svg{display:block; width:100%; height:auto}
+.gridline{stroke:var(--rule); stroke-width:1}
+.axis{fill:var(--ink-3); font-family:"IBM Plex Mono",monospace; font-size:11px}
+.series{fill:none; stroke-width:2.25; stroke-linejoin:round; stroke-linecap:round; transition:opacity .15s,stroke-width .15s}
+.dim .series{opacity:.13}
+.dim .series.hot{opacity:1; stroke-width:3.25}
+.dim .endcap{opacity:.13}
+.dim .endcap.hot{opacity:1}
 
-.net{font-family:"IBM Plex Mono",monospace; font-weight:700; font-size:14.5px;
-  text-align:right; white-space:nowrap}
-.net.up{color:var(--green)} .net.down{color:var(--red)} .net.flat{color:var(--ink-3)}
+/* attendance */
+.grid-wrap{overflow-x:auto; margin:18px 0 0; padding-bottom:6px}
+.att{border-collapse:separate; border-spacing:0; width:auto; min-width:0}
+.att td,.att th{border:none; padding:0}
+.att .lbl{padding:0 14px 0 0; text-align:right; font-family:"Public Sans",sans-serif; font-weight:600;
+  font-size:13.5px; white-space:nowrap}
+.cell{width:13px; height:21px; padding:0 !important}
+.cell i{display:block; width:10px; height:16px; border-radius:1.5px; margin:0 auto}
+.mo{font-family:"IBM Plex Mono",monospace; font-size:10px; fill:var(--ink-3); color:var(--ink-3);
+  text-align:left; letter-spacing:.04em}
+.trend{font-size:11px; font-weight:700; margin-left:5px; font-family:"IBM Plex Mono",monospace}
+.up{color:var(--green)} .down{color:var(--red)} .flat{color:var(--ink-3)}
+.key{display:flex; flex-wrap:wrap; gap:16px; margin:16px 0 0; font-size:12.5px; color:var(--ink-2)}
+.key span{display:inline-flex; align-items:center; gap:7px}
+.key i{width:10px; height:15px; border-radius:1.5px; display:block}
 
-.note{margin:16px 0 0; font-size:12.5px; color:var(--ink-3); max-width:46ch}
-.foot{display:flex; flex-wrap:wrap; align-items:center; gap:8px 14px; margin:28px 0 0;
-  padding-top:16px; border-top:1px solid var(--rule); font-size:13px; color:var(--ink-2)}
-.foot a{color:var(--accent); font-weight:600; text-decoration:none; margin-left:auto}
-.foot a:hover{text-decoration:underline}
+/* callouts */
+.cards{display:grid; grid-template-columns:repeat(auto-fit,minmax(215px,1fr)); gap:14px; margin:18px 0 0}
+.card{background:var(--panel); border:1px solid var(--rule); border-radius:4px; padding:15px 16px 16px}
+.card h3{margin:0; font-size:10.5px; font-weight:600; letter-spacing:.13em; text-transform:uppercase; color:var(--ink-3)}
+.card .big{font-family:"IBM Plex Mono",monospace; font-variant-numeric:tabular-nums; font-size:26px;
+  font-weight:600; letter-spacing:-.02em; margin:9px 0 2px}
+.card p{margin:4px 0 0; font-size:13px; color:var(--ink-2)}
+.shame{border-left:3px solid var(--red)}
+.shame .big{color:var(--red)}
+.praise{border-left:3px solid var(--green)}
+.praise .big{color:var(--green)}
+.verdict{margin:20px 0 0; padding:16px 18px; background:var(--miss-bg); border:1px solid var(--rule);
+  border-left:3px solid var(--red); border-radius:4px; font-size:15px}
+.verdict b{font-family:"Archivo Black",sans-serif; font-weight:400; text-transform:uppercase; letter-spacing:-.01em}
 
-@media (max-width:380px){
-  .wrap{padding:22px 12px 44px}
-  .who b{font-size:13px}
-  td{padding:8px 1px}
-  .net{font-size:13px}
+/* head to head */
+.h2h td,.h2h th{text-align:center; padding:9px 6px; font-size:13px}
+.h2h th.l{text-align:left}
+.h2h .self{color:var(--ink-3); background:var(--panel-2)}
+.h2h b{font-weight:600}
+
+/* quality bars */
+.qual{display:grid; gap:11px; margin:18px 0 0}
+.qrow{display:grid; grid-template-columns:78px 1fr; gap:14px; align-items:center}
+.qname{font-weight:600; font-size:13.5px}
+.qbar{display:flex; height:22px; border-radius:3px; overflow:hidden; background:var(--sunk)}
+.qbar i{display:block; font-family:"IBM Plex Mono",monospace; font-size:10.5px; text-align:center;
+  line-height:22px; font-weight:600; color:#fff; overflow:hidden}
+.qbar i.light{color:rgba(0,0,0,.72)}
+
+/* receipts */
+.receipt{background:var(--panel-2); border:1px solid var(--rule); border-radius:4px; padding:14px 16px;
+  font-family:"IBM Plex Mono",monospace; font-size:13px; white-space:pre-wrap; line-height:1.65}
+.receipts{display:grid; grid-template-columns:repeat(auto-fit,minmax(250px,1fr)); gap:14px; margin:18px 0 0}
+.tag{display:inline-block; font-family:"Public Sans",sans-serif; font-size:10.5px; font-weight:600;
+  letter-spacing:.12em; text-transform:uppercase; color:var(--red); margin-bottom:8px}
+
+/* log */
+.log{margin:18px 0 0; border-top:1px solid var(--rule-2)}
+.day{display:grid; grid-template-columns:92px 1fr; gap:16px; padding:12px 0; border-bottom:1px solid var(--rule);
+  align-items:start}
+.day .d{font-family:"IBM Plex Mono",monospace; font-size:12.5px; color:var(--ink-3); padding-top:3px}
+.entries{display:flex; flex-wrap:wrap; gap:7px}
+.entry{display:inline-flex; align-items:center; gap:8px; background:var(--panel); border:1px solid var(--rule);
+  border-radius:3px; padding:4px 10px 4px 8px; font-size:13px}
+.entry.w{border-color:var(--gold); background:var(--panel)}
+.entry .s{font-family:"IBM Plex Mono",monospace; font-variant-numeric:tabular-nums; font-weight:600}
+.entry .p{font-size:11px; letter-spacing:-1px}
+.absent{color:var(--ink-3); font-size:12.5px; font-style:italic; margin-top:6px;
+  font-family:"Public Sans",sans-serif}
+.more{margin:20px 0 0; background:var(--panel); border:1px solid var(--rule-2); color:var(--ink);
+  font-family:"Public Sans",sans-serif; font-weight:600; font-size:13px; padding:9px 18px; border-radius:3px;
+  cursor:pointer}
+.more:hover{background:var(--panel-2)}
+footer{margin:70px 0 0; padding-top:18px; border-top:1px solid var(--rule); font-size:12.5px; color:var(--ink-3)}
+@media (max-width:640px){
+  .day{grid-template-columns:1fr; gap:6px}
+  .strip dd{font-size:19px}
 }
+
+/* Phones: this gets read in the group chat far more than on a desktop, so the
+   secondary columns are dropped rather than pushed off into a sideways scroll.
+   Everything hidden here is still in the DOM and comes back at 700px. */
+@media (max-width:700px){
+  .wrap{padding:0 14px 80px}
+  table{min-width:0}
+  .opt{display:none}
+  td{padding:10px 6px; font-size:13px}
+  th{padding:0 6px 8px; font-size:9.5px; letter-spacing:.08em}
+  .rank{font-size:17px}
+  .who{font-size:14px; gap:7px}
+  .avg{font-size:15px}
+  .bar{display:none}
+  section{margin:44px 0 0}
+  .sec-head{flex-wrap:wrap; gap:6px 12px}
+  .sec-note{margin-left:0; width:100%; text-align:left}
+  .tabs{margin-left:0; width:100%; overflow-x:auto; padding-bottom:2px}
+  .deck{font-size:15px}
+  .cup .t{font-size:13px; padding:6px 12px 6px 10px}
+  .chart-card{padding:12px 8px 8px}
+}
+@media (prefers-reduced-motion:reduce){*{transition:none !important; animation:none !important}}
 </style>
 
 <div class="wrap">
-  <p class="eyebrow"><span id="wk-no"></span> <span id="wk-range"></span>
-    <span class="pill" id="wk-pill"></span></p>
-  <h1 class="wordmark">This Week</h1>
-  <p class="headline" id="headline"></p>
+<header class="masthead">
+  <p class="eyebrow"><span id="ey-range"></span> <span>·</span> <span id="ey-count"></span> <span>·</span> <a href="./weekly.html">This week's edition</a>
+    <span>·</span> <a href="./history.html">Full history →</a>
+    <span>·</span> <a href="https://geosports.app">geosports.app</a></p>
+  <h1 class="wordmark">The Pin<br>Board</h1>
+  <p class="deck">Every GeoSports result posted to the group chat, scored, ranked and cross-referenced. Five rounds a day, 200 points a round, 1,000 on the line. Attendance is taken.</p>
+  <dl class="strip" id="strip"></dl>
+  <div class="today" id="today"></div>
+</header>
 
-  <table id="board"></table>
-  <p class="note">Net is each day's score measured against that day's median,
-    averaged out — so a run of hard puzzles doesn't flatter whoever showed up.</p>
+<section>
+  <div class="sec-head"><h2>The League Table</h2><span class="sec-note">Season standings</span></div>
+  <div class="scroll"><table id="league"></table></div>
+  <p class="blurb" id="league-blurb"></p>
+</section>
 
-  <div class="foot">
-    <span id="cup"></span>
-    <a id="board-link" href="#">Full stats →</a>
+<section>
+  <div class="sec-head"><h2>Standings</h2>
+    <div class="tabs" id="tabs"></div>
+    <span class="sec-note" id="stand-note"></span></div>
+  <div class="scroll"><table id="standings"></table></div>
+  <p class="blurb" id="stand-blurb"></p>
+</section>
+
+<section>
+  <div class="sec-head"><h2>The Weekly Cup</h2><span class="sec-note" id="cup-note"></span></div>
+  <div class="cup" id="cup"></div>
+  <div class="scroll"><table id="weeks"></table></div>
+  <p class="blurb" id="cup-blurb"></p>
+</section>
+
+<section>
+  <div class="sec-head"><h2>The Season So Far</h2><span class="sec-note">Beat report</span></div>
+  <div class="story" id="story"></div>
+  <div class="dossier" id="dossier"></div>
+</section>
+
+<section>
+  <div class="sec-head"><h2>Form</h2><span class="sec-note">Five-game rolling average</span></div>
+  <div class="chart-card">
+    <svg id="chart" viewBox="0 0 920 330" role="img" aria-label="Five-game rolling average by player"></svg>
   </div>
+  <div class="legend" id="legend"></div>
+</section>
+
+<section>
+  <div class="sec-head"><h2>Roll Call</h2><span class="sec-note" id="roll-note"></span></div>
+  <p class="blurb">One column per puzzle. A filled block is a posted score, a hollow block is a no-show. Blocks only start once you've joined — nobody is charged for the days before their first post.</p>
+  <div class="grid-wrap"><table class="att" id="attendance"></table></div>
+  <div class="key">
+    <span><i style="background:var(--gold)"></i> won the day</span>
+    <span><i style="background:linear-gradient(160deg,var(--p-Andy),var(--p-Tirso))"></i> posted a score (player colour)</span>
+    <span><i style="background:transparent;border:1px dashed var(--miss)"></i> no-show</span>
+  </div>
+  <div class="cards" id="attendance-cards"></div>
+  <div class="verdict" id="verdict"></div>
+</section>
+
+<section>
+  <div class="sec-head"><h2>Month by Month</h2>
+    <span class="sec-note">A champion needs 40% of that month's puzzles</span></div>
+  <div class="scroll"><table id="months"></table></div>
+</section>
+
+<section>
+  <div class="sec-head"><h2>Round Quality</h2><span class="sec-note" id="pinval"></span></div>
+  <p class="blurb">Share of all rounds by pin colour. The trophy only started appearing on <span id="trophy-date" class="mono"></span> — before that a perfect round showed as a plain green — so the perfect-round column below counts trophy-era games only.</p>
+  <div class="qual" id="quality"></div>
+  <div class="scroll"><table id="perfect"></table></div>
+</section>
+
+<section>
+  <div class="sec-head"><h2>Head to Head</h2><span class="sec-note">Only days both players posted</span></div>
+  <div class="scroll"><table class="h2h" id="h2h"></table></div>
+</section>
+
+<section>
+  <div class="sec-head"><h2>The Record Book</h2></div>
+  <div class="cards" id="records"></div>
+</section>
+
+<section>
+  <div class="sec-head"><h2>Under Review</h2><span class="sec-note">Pin lines that aren't five pins</span></div>
+  <p class="blurb">A real GeoSports share is exactly five pins. These are not.</p>
+  <div class="receipts" id="receipts"></div>
+</section>
+
+<section>
+  <div class="sec-head"><h2>Paste It In The Chat</h2><span class="sec-note">Tap to select, then copy</span></div>
+  <p class="blurb">The standings in a shape that survives a text message. Nobody can claim they didn't see it.</p>
+  <pre class="receipt" id="paste" tabindex="0"></pre>
+  <button class="more" id="copy" type="button">Copy to clipboard</button>
+</section>
+
+<section>
+  <div class="sec-head"><h2>Daily Log</h2><span class="sec-note" id="log-note"></span></div>
+  <div class="log" id="log"></div>
+  <button class="more" id="more" type="button">Show every day</button>
+</section>
+
+<footer id="foot"></footer>
 </div>
 
 <script>
-const ED = {"generated":"2026-09-13T20:58","number":2,"finished":false,"week":{"week":"2026-W37","start":"2026-09-07","end":"2026-09-13","days":7,"dates":["2026-09-07","2026-09-08","2026-09-09","2026-09-10","2026-09-11","2026-09-12","2026-09-13"],"need":3,"winners":["Andy"],"margin":17.5,"standings":[{"player":"Andy","played":6,"dates":["2026-09-07","2026-09-09","2026-09-10","2026-09-11","2026-09-12","2026-09-13"],"avg":900.5,"best":987,"adj_avg":20.9,"day_wins":4,"eligible":true},{"player":"Andrew","played":7,"dates":["2026-09-07","2026-09-08","2026-09-09","2026-09-10","2026-09-11","2026-09-12","2026-09-13"],"avg":886.6,"best":936,"adj_avg":3.4,"day_wins":1,"eligible":true},{"player":"Migs","played":7,"dates":["2026-09-07","2026-09-08","2026-09-09","2026-09-10","2026-09-11","2026-09-12","2026-09-13"],"avg":875.1,"best":943,"adj_avg":-8.1,"day_wins":0,"eligible":true},{"player":"Tirso","played":7,"dates":["2026-09-07","2026-09-08","2026-09-09","2026-09-10","2026-09-11","2026-09-12","2026-09-13"],"avg":874,"best":982,"adj_avg":-9.2,"day_wins":2,"eligible":true},{"player":"Matt","played":4,"dates":["2026-09-07","2026-09-09","2026-09-10","2026-09-11"],"avg":848.5,"best":977,"adj_avg":-33.9,"day_wins":0,"eligible":true},{"player":"Wesley","played":5,"dates":["2026-09-07","2026-09-09","2026-09-10","2026-09-11","2026-09-12"],"avg":836.2,"best":932,"adj_avg":-41.9,"day_wins":0,"eligible":true}],"days_list":["2026-09-07","2026-09-08","2026-09-09","2026-09-10","2026-09-11","2026-09-12","2026-09-13"],"grid":{"Andy":[{"date":"2026-09-07","state":"played","score":908,"rank":1},{"date":"2026-09-08","state":"missed"},{"date":"2026-09-09","state":"played","score":987,"rank":1},{"date":"2026-09-10","state":"played","score":814,"rank":5},{"date":"2026-09-11","state":"played","score":912,"rank":1},{"date":"2026-09-12","state":"played","score":943,"rank":1},{"date":"2026-09-13","state":"played","score":839,"rank":4}],"Andrew":[{"date":"2026-09-07","state":"played","score":868,"rank":4},{"date":"2026-09-08","state":"played","score":834,"rank":3},{"date":"2026-09-09","state":"played","score":936,"rank":5},{"date":"2026-09-10","state":"played","score":841,"rank":4},{"date":"2026-09-11","state":"played","score":909,"rank":2},{"date":"2026-09-12","state":"played","score":900,"rank":2},{"date":"2026-09-13","state":"played","score":918,"rank":1}],"Migs":[{"date":"2026-09-07","state":"played","score":891,"rank":3},{"date":"2026-09-08","state":"played","score":905,"rank":2},{"date":"2026-09-09","state":"played","score":943,"rank":4},{"date":"2026-09-10","state":"played","score":807,"rank":6},{"date":"2026-09-11","state":"played","score":808,"rank":4},{"date":"2026-09-12","state":"played","score":861,"rank":3},{"date":"2026-09-13","state":"played","score":911,"rank":2}],"Tirso":[{"date":"2026-09-07","state":"played","score":763,"rank":6},{"date":"2026-09-08","state":"played","score":929,"rank":1},{"date":"2026-09-09","state":"played","score":982,"rank":2},{"date":"2026-09-10","state":"played","score":914,"rank":1},{"date":"2026-09-11","state":"played","score":868,"rank":3},{"date":"2026-09-12","state":"played","score":799,"rank":4},{"date":"2026-09-13","state":"played","score":863,"rank":3}],"Matt":[{"date":"2026-09-07","state":"played","score":809,"rank":5},{"date":"2026-09-08","state":"missed"},{"date":"2026-09-09","state":"played","score":977,"rank":3},{"date":"2026-09-10","state":"played","score":876,"rank":2},{"date":"2026-09-11","state":"played","score":732,"rank":5},{"date":"2026-09-12","state":"missed"},{"date":"2026-09-13","state":"missed"}],"Wesley":[{"date":"2026-09-07","state":"played","score":905,"rank":2},{"date":"2026-09-08","state":"missed"},{"date":"2026-09-09","state":"played","score":932,"rank":6},{"date":"2026-09-10","state":"played","score":863,"rank":3},{"date":"2026-09-11","state":"played","score":713,"rank":6},{"date":"2026-09-12","state":"played","score":768,"rank":5},{"date":"2026-09-13","state":"missed"}]}},"headline":"Andy leads Week 2, +20.9 a day ahead of the median.","cup":[["Migs",1]],"season":{"leader":"Andy","adj":15.6},"board_url":"./board.html","weekly_url":"https://ramireztirso-rgb.github.io/pin-board/"};
-const W = ED.week;
+const DATA = {"generated":"2026-09-13T21:12","first_date":"2026-09-01","last_date":"2026-09-13","days":13,"entries":70,"players":["Andy","Migs","Andrew","Matt","Tirso","Wesley"],"table":[{"player":"Andy","games":12,"avg":883,"median":908.5,"adj_avg":15.6,"adj_best":82,"adj_worst":-48.0,"adj_games":12,"best":987,"worst":767,"wins":5,"podiums":7,"avg_rank":2.75,"played_pct":92,"pins":{"🏆":22,"🟢":14,"🟡":23,"🔴":1},"pin_pct":{"🏆":36.7,"🟢":23.3,"🟡":38.3,"🔴":1.7},"flagged":0,"qualified":true,"era_games":12,"era_trophies":22,"era_trophy_pct":36.7,"streak":5,"first_seen":"2026-09-01","eligible":13,"missed":1,"missed_dates":["2026-09-08"],"attendance_pct":92,"recent_played":12,"recent_eligible":13,"longest_absence":1,"longest_absence_end":"2026-09-08","ghosting":0,"last5":[987,814,912,943,839],"series":[{"date":"2026-09-01","score":911},{"date":"2026-09-02","score":855},{"date":"2026-09-03","score":809},{"date":"2026-09-04","score":942},{"date":"2026-09-05","score":767},{"date":"2026-09-06","score":909},{"date":"2026-09-07","score":908},{"date":"2026-09-09","score":987},{"date":"2026-09-10","score":814},{"date":"2026-09-11","score":912},{"date":"2026-09-12","score":943},{"date":"2026-09-13","score":839}],"weekly_wins":1},{"player":"Migs","games":13,"avg":872.7,"median":883,"adj_avg":2.4,"adj_best":125.0,"adj_worst":-64.0,"adj_games":13,"best":943,"worst":781,"wins":1,"podiums":8,"avg_rank":3.15,"played_pct":100,"pins":{"🏆":12,"🟢":18,"🟡":34,"🔴":1},"pin_pct":{"🏆":18.5,"🟢":27.7,"🟡":52.3,"🔴":1.5},"flagged":0,"qualified":true,"era_games":13,"era_trophies":12,"era_trophy_pct":18.5,"streak":13,"first_seen":"2026-09-01","eligible":13,"missed":0,"missed_dates":[],"attendance_pct":100,"recent_played":13,"recent_eligible":13,"longest_absence":0,"longest_absence_end":null,"ghosting":0,"last5":[943,807,808,861,911],"series":[{"date":"2026-09-01","score":919},{"date":"2026-09-02","score":883},{"date":"2026-09-03","score":843},{"date":"2026-09-04","score":872},{"date":"2026-09-05","score":921},{"date":"2026-09-06","score":781},{"date":"2026-09-07","score":891},{"date":"2026-09-08","score":905},{"date":"2026-09-09","score":943},{"date":"2026-09-10","score":807},{"date":"2026-09-11","score":808},{"date":"2026-09-12","score":861},{"date":"2026-09-13","score":911}],"weekly_wins":1},{"player":"Andrew","games":13,"avg":869.2,"median":868,"adj_avg":-1.0,"adj_best":74.0,"adj_worst":-82.0,"adj_games":13,"best":936,"worst":810,"wins":3,"podiums":7,"avg_rank":3.38,"played_pct":100,"pins":{"🏆":16,"🟢":18,"🟡":29,"🔴":2},"pin_pct":{"🏆":24.6,"🟢":27.7,"🟡":44.6,"🔴":3.1},"flagged":0,"qualified":true,"era_games":13,"era_trophies":16,"era_trophy_pct":24.6,"streak":13,"first_seen":"2026-09-01","eligible":13,"missed":0,"missed_dates":[],"attendance_pct":100,"recent_played":13,"recent_eligible":13,"longest_absence":0,"longest_absence_end":null,"ghosting":0,"last5":[936,841,909,900,918],"series":[{"date":"2026-09-01","score":824},{"date":"2026-09-02","score":828},{"date":"2026-09-03","score":888},{"date":"2026-09-04","score":810},{"date":"2026-09-05","score":825},{"date":"2026-09-06","score":919},{"date":"2026-09-07","score":868},{"date":"2026-09-08","score":834},{"date":"2026-09-09","score":936},{"date":"2026-09-10","score":841},{"date":"2026-09-11","score":909},{"date":"2026-09-12","score":900},{"date":"2026-09-13","score":918}],"weekly_wins":0},{"player":"Matt","games":9,"avg":858.7,"median":871,"adj_avg":-9.7,"adj_best":61.0,"adj_worst":-106.0,"adj_games":9,"best":977,"worst":732,"wins":0,"podiums":5,"avg_rank":3.56,"played_pct":69,"pins":{"🏆":11,"🟢":13,"🟡":20,"🔴":1},"pin_pct":{"🏆":24.4,"🟢":28.9,"🟡":44.4,"🔴":2.2},"flagged":0,"qualified":false,"era_games":9,"era_trophies":11,"era_trophy_pct":24.4,"streak":0,"first_seen":"2026-09-01","eligible":13,"missed":4,"missed_dates":["2026-09-06","2026-09-08","2026-09-12","2026-09-13"],"attendance_pct":69,"recent_played":9,"recent_eligible":13,"longest_absence":2,"longest_absence_end":"2026-09-13","ghosting":2,"last5":[857,809,977,876,732],"series":[{"date":"2026-09-01","score":886},{"date":"2026-09-02","score":871},{"date":"2026-09-03","score":848},{"date":"2026-09-04","score":872},{"date":"2026-09-05","score":857},{"date":"2026-09-07","score":809},{"date":"2026-09-09","score":977},{"date":"2026-09-10","score":876},{"date":"2026-09-11","score":732}],"weekly_wins":0},{"player":"Tirso","games":13,"avg":855.3,"median":868,"adj_avg":-15.0,"adj_best":62.0,"adj_worst":-116.5,"adj_games":13,"best":982,"worst":752,"wins":3,"podiums":7,"avg_rank":3.15,"played_pct":100,"pins":{"🏆":17,"🟢":22,"🟡":22,"🔴":4},"pin_pct":{"🏆":26.2,"🟢":33.8,"🟡":33.8,"🔴":6.2},"flagged":0,"qualified":true,"era_games":13,"era_trophies":17,"era_trophy_pct":26.2,"streak":13,"first_seen":"2026-09-01","eligible":13,"missed":0,"missed_dates":[],"attendance_pct":100,"recent_played":13,"recent_eligible":13,"longest_absence":0,"longest_absence_end":null,"ghosting":0,"last5":[982,914,868,799,863],"series":[{"date":"2026-09-01","score":901},{"date":"2026-09-02","score":888},{"date":"2026-09-03","score":878},{"date":"2026-09-04","score":814},{"date":"2026-09-05","score":752},{"date":"2026-09-06","score":768},{"date":"2026-09-07","score":763},{"date":"2026-09-08","score":929},{"date":"2026-09-09","score":982},{"date":"2026-09-10","score":914},{"date":"2026-09-11","score":868},{"date":"2026-09-12","score":799},{"date":"2026-09-13","score":863}],"weekly_wins":0},{"player":"Wesley","games":10,"avg":837.3,"median":856.5,"adj_avg":-30.4,"adj_best":35.0,"adj_worst":-125.0,"adj_games":10,"best":941,"worst":672,"wins":1,"podiums":5,"avg_rank":3.9,"played_pct":77,"pins":{"🏆":9,"🟢":13,"🟡":25,"🔴":3},"pin_pct":{"🏆":18.0,"🟢":26.0,"🟡":50.0,"🔴":6.0},"flagged":0,"qualified":true,"era_games":10,"era_trophies":9,"era_trophy_pct":18.0,"streak":0,"first_seen":"2026-09-01","eligible":13,"missed":3,"missed_dates":["2026-09-06","2026-09-08","2026-09-13"],"attendance_pct":77,"recent_played":10,"recent_eligible":13,"longest_absence":1,"longest_absence_end":"2026-09-06","ghosting":1,"last5":[905,932,863,713,768],"series":[{"date":"2026-09-01","score":941},{"date":"2026-09-02","score":831},{"date":"2026-09-03","score":850},{"date":"2026-09-04","score":898},{"date":"2026-09-05","score":672},{"date":"2026-09-07","score":905},{"date":"2026-09-09","score":932},{"date":"2026-09-10","score":863},{"date":"2026-09-11","score":713},{"date":"2026-09-12","score":768}],"weekly_wins":0}],"daily":[{"date":"2026-09-01","median":906.0,"results":[{"player":"Wesley","score":941,"pins":"🟢🟡🟡🏆🏆","tampered":false,"adj":35.0},{"player":"Migs","score":919,"pins":"🟢🟡🟡🟢🏆","tampered":false,"adj":13.0},{"player":"Andy","score":911,"pins":"🟢🟡🟡🟢🏆","tampered":false,"adj":5.0},{"player":"Tirso","score":901,"pins":"🟢🟡🟡🟢🏆","tampered":false,"adj":-5.0},{"player":"Matt","score":886,"pins":"🟢🟡🟡🟢🏆","tampered":false,"adj":-20.0},{"player":"Andrew","score":824,"pins":"🟢🟡🟡🟡🏆","tampered":false,"adj":-82.0}]},{"date":"2026-09-02","median":863.0,"results":[{"player":"Tirso","score":888,"pins":"🟢🟡🟢🏆🟡","tampered":false,"adj":25.0},{"player":"Migs","score":883,"pins":"🟡🟢🟡🟢🟡","tampered":false,"adj":20.0},{"player":"Matt","score":871,"pins":"🟡🟢🟡🟢🟡","tampered":false,"adj":8.0},{"player":"Andy","score":855,"pins":"🟢🟡🏆🏆🟡","tampered":false,"adj":-8.0},{"player":"Wesley","score":831,"pins":"🟢🟡🟡🏆🟡","tampered":false,"adj":-32.0},{"player":"Andrew","score":828,"pins":"🟡🟡🟡🏆🟡","tampered":false,"adj":-35.0}]},{"date":"2026-09-03","median":849.0,"results":[{"player":"Andrew","score":888,"pins":"🏆🟡🏆🟡🟢","tampered":false,"adj":39.0},{"player":"Tirso","score":878,"pins":"🏆🟡🟢🟡🟢","tampered":false,"adj":29.0},{"player":"Wesley","score":850,"pins":"🟡🟡🟢🟡🟢","tampered":false,"adj":1.0},{"player":"Matt","score":848,"pins":"🟡🟢🟡🟡🟢","tampered":false,"adj":-1.0},{"player":"Migs","score":843,"pins":"🟡🟡🟢🟡🟢","tampered":false,"adj":-6.0},{"player":"Andy","score":809,"pins":"🟡🟡🟢🟡🟡","tampered":false,"adj":-40.0}]},{"date":"2026-09-04","median":872.0,"results":[{"player":"Andy","score":942,"pins":"🏆🏆🟢🟡🏆","tampered":false,"adj":70.0},{"player":"Wesley","score":898,"pins":"🏆🟢🟢🟡🟢","tampered":false,"adj":26.0},{"player":"Matt","score":872,"pins":"🏆🏆🟡🟡🟢","tampered":false,"adj":0.0},{"player":"Migs","score":872,"pins":"🏆🏆🟡🟡🟢","tampered":false,"adj":0.0},{"player":"Tirso","score":814,"pins":"🏆🏆🟡🟡🏆","tampered":false,"adj":-58.0},{"player":"Andrew","score":810,"pins":"🟢🏆🟢🔴🟢","tampered":false,"adj":-62.0}]},{"date":"2026-09-05","median":796.0,"results":[{"player":"Migs","score":921,"pins":"🟢🟢🟡🟢🟡","tampered":false,"adj":125.0},{"player":"Matt","score":857,"pins":"🏆🏆🟡🟢🟡","tampered":false,"adj":61.0},{"player":"Andrew","score":825,"pins":"🟢🏆🟢🔴🟢","tampered":false,"adj":29.0},{"player":"Andy","score":767,"pins":"🏆🏆🟡🔴🟢","tampered":false,"adj":-29.0},{"player":"Tirso","score":752,"pins":"🏆🟢🟡🔴🟢","tampered":false,"adj":-44.0},{"player":"Wesley","score":672,"pins":"🟡🏆🟡🔴🟡","tampered":false,"adj":-124.0}]},{"date":"2026-09-06","median":845.0,"results":[{"player":"Andrew","score":919,"pins":"🟡🟡🏆🟡🟢","tampered":false,"adj":74.0},{"player":"Andy","score":909,"pins":"🏆🟡🏆🟡🟢","tampered":false,"adj":64.0},{"player":"Migs","score":781,"pins":"🏆🟡🏆🟡🔴","tampered":false,"adj":-64.0},{"player":"Tirso","score":768,"pins":"🏆🟡🏆🟡🔴","tampered":false,"adj":-77.0}]},{"date":"2026-09-07","median":879.5,"results":[{"player":"Andy","score":908,"pins":"🟡🏆🟡🏆🏆","tampered":false,"adj":28.5},{"player":"Wesley","score":905,"pins":"🟡🟡🟡🟢🟢","tampered":false,"adj":25.5},{"player":"Migs","score":891,"pins":"🟢🟢🟡🟢🟡","tampered":false,"adj":11.5},{"player":"Andrew","score":868,"pins":"🟢🟡🟡🟡🏆","tampered":false,"adj":-11.5},{"player":"Matt","score":809,"pins":"🟢🟡🟡🟢🟡","tampered":false,"adj":-70.5},{"player":"Tirso","score":763,"pins":"🟡🟢🟡🔴🟢","tampered":false,"adj":-116.5}]},{"date":"2026-09-08","median":905,"results":[{"player":"Tirso","score":929,"pins":"🟢🏆🟢🟡🟢","tampered":false,"adj":24},{"player":"Migs","score":905,"pins":"🟡🏆🟢🟡🏆","tampered":false,"adj":0},{"player":"Andrew","score":834,"pins":"🟡🏆🟡🟡🏆","tampered":false,"adj":-71}]},{"date":"2026-09-09","median":960.0,"results":[{"player":"Andy","score":987,"pins":"🏆🟢🟢🏆🏆","tampered":false,"adj":27.0},{"player":"Tirso","score":982,"pins":"🏆🟢🏆🏆🟢","tampered":false,"adj":22.0},{"player":"Matt","score":977,"pins":"🏆🟡🏆🏆🟢","tampered":false,"adj":17.0},{"player":"Migs","score":943,"pins":"🏆🟡🟡🏆🟢","tampered":false,"adj":-17.0},{"player":"Andrew","score":936,"pins":"🏆🟡🟡🏆🟢","tampered":false,"adj":-24.0},{"player":"Wesley","score":932,"pins":"🏆🟢🟢🟡🟢","tampered":false,"adj":-28.0}]},{"date":"2026-09-10","median":852.0,"results":[{"player":"Tirso","score":914,"pins":"🟢🟢🟢🟡🟡","tampered":false,"adj":62.0},{"player":"Matt","score":876,"pins":"🟢🏆🟡🟢🟡","tampered":false,"adj":24.0},{"player":"Wesley","score":863,"pins":"🟡🟡🟡🏆🟡","tampered":false,"adj":11.0},{"player":"Andrew","score":841,"pins":"🟡🟡🟡🟢🟡","tampered":false,"adj":-11.0},{"player":"Andy","score":814,"pins":"🟡🏆🟡🏆🟡","tampered":false,"adj":-38.0},{"player":"Migs","score":807,"pins":"🟡🟡🟡🟡🟡","tampered":false,"adj":-45.0}]},{"date":"2026-09-11","median":838.0,"results":[{"player":"Andy","score":912,"pins":"🟡🏆🟡🏆🟢","tampered":false,"adj":74.0},{"player":"Andrew","score":909,"pins":"🟢🏆🟡🏆🟢","tampered":false,"adj":71.0},{"player":"Tirso","score":868,"pins":"🟡🏆🟡🏆🟡","tampered":false,"adj":30.0},{"player":"Migs","score":808,"pins":"🟡🟡🟡🏆🟡","tampered":false,"adj":-30.0},{"player":"Matt","score":732,"pins":"🟡🏆🟡🏆🔴","tampered":false,"adj":-106.0},{"player":"Wesley","score":713,"pins":"🟡🏆🟡🏆🔴","tampered":false,"adj":-125.0}]},{"date":"2026-09-12","median":861,"results":[{"player":"Andy","score":943,"pins":"🟢🏆🟡🟢🟢","tampered":false,"adj":82},{"player":"Andrew","score":900,"pins":"🟡🏆🟡🟢🟢","tampered":false,"adj":39},{"player":"Migs","score":861,"pins":"🟢🟡🟡🟢🟡","tampered":false,"adj":0},{"player":"Tirso","score":799,"pins":"🟢🏆🟡🔴🟢","tampered":false,"adj":-62},{"player":"Wesley","score":768,"pins":"🟡🟡🟡🔴🟢","tampered":false,"adj":-93}]},{"date":"2026-09-13","median":887.0,"results":[{"player":"Andrew","score":918,"pins":"🏆🟡🟢🟢🟡","tampered":false,"adj":31.0},{"player":"Migs","score":911,"pins":"🏆🟢🟡🏆🟡","tampered":false,"adj":24.0},{"player":"Tirso","score":863,"pins":"🏆🟡🟡🟢🟢","tampered":false,"adj":-24.0},{"player":"Andy","score":839,"pins":"🏆🟡🟡🟢🟡","tampered":false,"adj":-48.0}]}],"h2h":{"Andrew|Andy":{"w":5,"l":7,"t":0},"Andrew|Matt":{"w":3,"l":6,"t":0},"Andrew|Migs":{"w":6,"l":7,"t":0},"Andrew|Tirso":{"w":7,"l":6,"t":0},"Andrew|Wesley":{"w":5,"l":5,"t":0},"Andy|Andrew":{"w":7,"l":5,"t":0},"Andy|Matt":{"w":5,"l":4,"t":0},"Andy|Migs":{"w":7,"l":5,"t":0},"Andy|Tirso":{"w":8,"l":4,"t":0},"Andy|Wesley":{"w":7,"l":3,"t":0},"Matt|Andrew":{"w":6,"l":3,"t":0},"Matt|Andy":{"w":4,"l":5,"t":0},"Matt|Migs":{"w":3,"l":5,"t":1},"Matt|Tirso":{"w":3,"l":6,"t":0},"Matt|Wesley":{"w":5,"l":4,"t":0},"Migs|Andrew":{"w":7,"l":6,"t":0},"Migs|Andy":{"w":5,"l":7,"t":0},"Migs|Matt":{"w":5,"l":3,"t":1},"Migs|Tirso":{"w":7,"l":6,"t":0},"Migs|Wesley":{"w":5,"l":5,"t":0},"Tirso|Andrew":{"w":6,"l":7,"t":0},"Tirso|Andy":{"w":4,"l":8,"t":0},"Tirso|Matt":{"w":6,"l":3,"t":0},"Tirso|Migs":{"w":6,"l":7,"t":0},"Tirso|Wesley":{"w":7,"l":3,"t":0},"Wesley|Andrew":{"w":5,"l":5,"t":0},"Wesley|Andy":{"w":3,"l":7,"t":0},"Wesley|Matt":{"w":4,"l":5,"t":0},"Wesley|Migs":{"w":5,"l":5,"t":0},"Wesley|Tirso":{"w":3,"l":7,"t":0}},"weeks":[{"week":"2026-W36","start":"2026-08-31","end":"2026-09-06","days":6,"dates":["2026-09-01","2026-09-02","2026-09-03","2026-09-04","2026-09-05","2026-09-06"],"need":3,"winners":["Migs"],"margin":4.4,"standings":[{"player":"Migs","played":6,"dates":["2026-09-01","2026-09-02","2026-09-03","2026-09-04","2026-09-05","2026-09-06"],"avg":869.8,"best":921,"adj_avg":14.7,"day_wins":1,"eligible":true},{"player":"Andy","played":6,"dates":["2026-09-01","2026-09-02","2026-09-03","2026-09-04","2026-09-05","2026-09-06"],"avg":865.5,"best":942,"adj_avg":10.3,"day_wins":1,"eligible":true},{"player":"Matt","played":5,"dates":["2026-09-01","2026-09-02","2026-09-03","2026-09-04","2026-09-05"],"avg":866.8,"best":886,"adj_avg":9.6,"day_wins":0,"eligible":true},{"player":"Andrew","played":6,"dates":["2026-09-01","2026-09-02","2026-09-03","2026-09-04","2026-09-05","2026-09-06"],"avg":849,"best":919,"adj_avg":-6.2,"day_wins":2,"eligible":true},{"player":"Wesley","played":5,"dates":["2026-09-01","2026-09-02","2026-09-03","2026-09-04","2026-09-05"],"avg":838.4,"best":941,"adj_avg":-18.8,"day_wins":1,"eligible":true},{"player":"Tirso","played":6,"dates":["2026-09-01","2026-09-02","2026-09-03","2026-09-04","2026-09-05","2026-09-06"],"avg":833.5,"best":901,"adj_avg":-21.7,"day_wins":1,"eligible":true}]},{"week":"2026-W37","start":"2026-09-07","end":"2026-09-13","days":7,"dates":["2026-09-07","2026-09-08","2026-09-09","2026-09-10","2026-09-11","2026-09-12","2026-09-13"],"need":3,"winners":["Andy"],"margin":17.5,"standings":[{"player":"Andy","played":6,"dates":["2026-09-07","2026-09-09","2026-09-10","2026-09-11","2026-09-12","2026-09-13"],"avg":900.5,"best":987,"adj_avg":20.9,"day_wins":4,"eligible":true},{"player":"Andrew","played":7,"dates":["2026-09-07","2026-09-08","2026-09-09","2026-09-10","2026-09-11","2026-09-12","2026-09-13"],"avg":886.6,"best":936,"adj_avg":3.4,"day_wins":1,"eligible":true},{"player":"Migs","played":7,"dates":["2026-09-07","2026-09-08","2026-09-09","2026-09-10","2026-09-11","2026-09-12","2026-09-13"],"avg":875.1,"best":943,"adj_avg":-8.1,"day_wins":0,"eligible":true},{"player":"Tirso","played":7,"dates":["2026-09-07","2026-09-08","2026-09-09","2026-09-10","2026-09-11","2026-09-12","2026-09-13"],"avg":874,"best":982,"adj_avg":-9.2,"day_wins":2,"eligible":true},{"player":"Matt","played":4,"dates":["2026-09-07","2026-09-09","2026-09-10","2026-09-11"],"avg":848.5,"best":977,"adj_avg":-33.9,"day_wins":0,"eligible":true},{"player":"Wesley","played":5,"dates":["2026-09-07","2026-09-09","2026-09-10","2026-09-11","2026-09-12"],"avg":836.2,"best":932,"adj_avg":-41.9,"day_wins":0,"eligible":true}]}],"league":[{"player":"Andy","gp":12,"ns":1,"wins":5,"pts":56.0,"form":[{"state":"played","date":"2026-09-09","rank":1,"score":987},{"state":"played","date":"2026-09-10","rank":5,"score":814},{"state":"played","date":"2026-09-11","rank":1,"score":912},{"state":"played","date":"2026-09-12","rank":1,"score":943},{"state":"played","date":"2026-09-13","rank":4,"score":839}],"pos":1},{"player":"Tirso","gp":13,"ns":0,"wins":3,"pts":53.0,"form":[{"state":"played","date":"2026-09-09","rank":2,"score":982},{"state":"played","date":"2026-09-10","rank":1,"score":914},{"state":"played","date":"2026-09-11","rank":3,"score":868},{"state":"played","date":"2026-09-12","rank":4,"score":799},{"state":"played","date":"2026-09-13","rank":3,"score":863}],"pos":2},{"player":"Migs","gp":13,"ns":0,"wins":1,"pts":51.5,"form":[{"state":"played","date":"2026-09-09","rank":4,"score":943},{"state":"played","date":"2026-09-10","rank":6,"score":807},{"state":"played","date":"2026-09-11","rank":4,"score":808},{"state":"played","date":"2026-09-12","rank":3,"score":861},{"state":"played","date":"2026-09-13","rank":2,"score":911}],"pos":3},{"player":"Andrew","gp":13,"ns":0,"wins":3,"pts":50.0,"form":[{"state":"played","date":"2026-09-09","rank":5,"score":936},{"state":"played","date":"2026-09-10","rank":4,"score":841},{"state":"played","date":"2026-09-11","rank":2,"score":909},{"state":"played","date":"2026-09-12","rank":2,"score":900},{"state":"played","date":"2026-09-13","rank":1,"score":918}],"pos":4},{"player":"Wesley","gp":10,"ns":3,"wins":1,"pts":32.0,"form":[{"state":"played","date":"2026-09-09","rank":6,"score":932},{"state":"played","date":"2026-09-10","rank":3,"score":863},{"state":"played","date":"2026-09-11","rank":6,"score":713},{"state":"played","date":"2026-09-12","rank":5,"score":768},{"state":"missed","date":"2026-09-13"}],"pos":5},{"player":"Matt","gp":9,"ns":4,"wins":0,"pts":30.5,"form":[{"state":"played","date":"2026-09-09","rank":3,"score":977},{"state":"played","date":"2026-09-10","rank":2,"score":876},{"state":"played","date":"2026-09-11","rank":5,"score":732},{"state":"missed","date":"2026-09-12"},{"state":"missed","date":"2026-09-13"}],"pos":6}],"week_min":3,"rank_points":[7,5,4,3,2,1],"trophy_era":"2026-08-05","qualify":10,"season_start":"2026-09-01","records":{"best":{"player":"Andy","date":"2026-09-09","score":987,"pins":"🏆🟢🟢🏆🏆","tampered":false,"sent_at":"2026-09-09T13:43:52"},"worst":{"player":"Wesley","date":"2026-09-05","score":672,"pins":"🟡🏆🟡🔴🟡","tampered":false,"sent_at":"2026-09-05T11:37:52"},"blowout":{"date":"2026-09-05","margin":249,"top":{"player":"Migs","score":921,"pins":"🟢🟢🟡🟢🟡","tampered":false,"adj":125.0},"bottom":{"player":"Wesley","score":672,"pins":"🟡🏆🟡🔴🟡","tampered":false,"adj":-124.0}},"tightest":{"date":"2026-09-09","spread":55,"n":6}},"pin_values":{"🏆":192,"🟢":195,"🟡":158,"🔴":46},"recent_window":14,"flagged":[]};
+const BOARD_URL = './index.html';
 
-const fmt = n => n.toLocaleString('en-US');
-const sign = n => (n > 0 ? '+' : '') + n;
-const short = d => new Date(d + 'T12:00:00').toLocaleDateString('en-US', {month:'short', day:'numeric'});
-const dayLetter = d => new Date(d + 'T12:00:00').toLocaleDateString('en-US', {weekday:'short'}).slice(0,2);
+const P = DATA.table;
+const byName = Object.fromEntries(P.map(p => [p.player, p]));
+const dates = DATA.daily.map(d => d.date);
 const color = n => `var(--p-${n}, var(--accent))`;
+const fmt = n => n.toLocaleString('en-US');
+const short = d => new Date(d + 'T12:00:00').toLocaleDateString('en-US', {month:'short', day:'numeric'});
+const el = (h) => { const t = document.createElement('template'); t.innerHTML = h.trim(); return t.content; };
 const band = s => s >= 950 ? 'var(--gold)' : s >= 880 ? 'var(--green)' : s >= 800 ? 'var(--yellow)' : 'var(--red)';
 
-document.getElementById('wk-no').textContent = `Week ${ED.number}`;
-document.getElementById('wk-range').textContent = `${short(W.start)} – ${short(W.end)}`;
-document.getElementById('wk-pill').textContent = ED.finished ? 'Final' : 'In progress';
-document.getElementById('wk-pill').classList.add(ED.finished ? 'final' : 'live');
-document.getElementById('headline').innerHTML =
-  ED.headline.replace(/^(\S+(?:\s&\s\S+)?)/, '<b>$1</b>');
+/* ---------- masthead ---------- */
+const WEEKS = DATA.weeks;
+const cupWins = {};
+P.forEach(p => cupWins[p.player] = 0);
+WEEKS.forEach(w => w.winners.forEach(p => cupWins[p] = (cupWins[p] || 0) + 1));
+const cupTop = Math.max(...Object.values(cupWins));
 
-/* standings arrive pre-sorted by adjusted score from stats.py */
-document.getElementById('board').innerHTML = `
-  <colgroup><col style="width:22px"><col style="width:30%">
-    ${W.days_list.map(() => '<col>').join('')}<col style="width:52px"></colgroup>
-  <thead><tr>
-    <th></th><th class="l">Player</th>
-    ${W.days_list.map(d => `<th>${dayLetter(d)}</th>`).join('')}
-    <th class="net">Net</th>
-  </tr></thead>
-  <tbody>${W.standings.map((r, i) => {
-    const cells = W.grid[r.player].map(c => {
-      if (c.state === 'none') return `<td class="cell"><div class="sq none"></div></td>`;
-      if (c.state === 'missed')
-        return `<td class="cell"><div class="sq miss" title="${short(c.date)}: no show">×</div></td>`;
-      return `<td class="cell"><div class="sq" style="background:${band(c.score)}"
-        title="${short(c.date)}: ${fmt(c.score)}, finished ${c.rank}">${c.rank}</div></td>`;
-    }).join('');
-    const m = r.adj_avg;
-    const cls = m === null ? 'flat' : m > 0 ? 'up' : m < 0 ? 'down' : 'flat';
-    return `<tr class="${W.winners.includes(r.player) ? 'won' : ''}">
-      <td class="rank">${i + 1}</td>
-      <td><div class="who"><span class="dot" style="background:${color(r.player)}"></span>
-        <b>${r.player}</b></div></td>
-      ${cells}
-      <td class="net ${cls}">${m === null ? '–' : sign(m)}</td>
+const leader = P.filter(p => p.qualified).sort((a,b) => b.avg - a.avg)[0];
+document.getElementById('ey-range').textContent = short(DATA.first_date) + ' – ' + short(DATA.last_date) + ', 2026';
+document.getElementById('ey-count').textContent = DATA.entries + ' results scraped from the group chat';
+document.getElementById('strip').innerHTML = [
+  ['Puzzles tracked', DATA.days, ''],
+  ['Results posted', DATA.entries, `of ${DATA.days * P.length} possible`],
+  ['Season leader', leader.player, `${leader.avg} avg`],
+  ['Most wins', [...P].sort((a,b) => b.wins - a.wins)[0].player,
+   `${[...P].sort((a,b) => b.wins - a.wins)[0].wins} days won`],
+  ['Show rate', Math.round(100 * DATA.entries / P.reduce((s,p) => s + p.eligible, 0)) + '%',
+   'of days players were eligible'],
+  ['Weekly cup', Object.entries(cupWins).sort((a,b) => b[1] - a[1])[0][0],
+   `${cupTop} of ${WEEKS.length} weeks`],
+].map(([k,v,s]) => `<div><dt>${k}</dt><dd>${v}${s ? ` <small>${s}</small>` : ''}</dd></div>`).join('');
+
+/* ---------- today ---------- */
+(function today() {
+  const last = DATA.daily[DATA.daily.length - 1];
+  const posted = new Map(last.results.map(r => [r.player, r]));
+  const eligible = P.filter(p => p.first_seen <= last.date);
+  const missing = eligible.filter(p => !posted.has(p.player));
+  const chips = eligible.map(p => {
+    const r = posted.get(p.player);
+    return r
+      ? `<span class="status in"><span class="dot" style="background:${color(p.player)}"></span>${
+          p.player}<span class="sc">${fmt(r.score)}</span></span>`
+      : `<span class="status out">${p.player} · no show</span>`;
+  }).join('');
+  document.getElementById('today').innerHTML =
+    `<span class="hd">${short(last.date)}</span>${chips}` +
+    (missing.length ? '' : `<span class="hd" style="margin-left:auto;color:var(--green)">full house</span>`);
+})();
+
+/* ---------- the league table ---------- */
+(function league() {
+  const chip = f => f.state === 'missed'
+    ? `<span class="n" title="No show">–</span>`
+    : `<span style="background:${band(f.score)}" title="${fmt(f.score)}, finished ${f.rank}">${f.rank}</span>`;
+  const rows = DATA.league.map(r => `
+    <tr>
+      <td class="rank">${r.pos}</td>
+      <td class="l"><div class="who"><span class="dot" style="background:${color(r.player)}"></span>${r.player}</div></td>
+      <td>${r.gp}</td>
+      <td class="${r.ns ? 'warn' : 'muted'}">${r.ns}</td>
+      <td>${r.wins}</td>
+      <td class="pts">${r.pts}</td>
+      <td><span class="form">${r.form.map(chip).join('')}</span></td>
+    </tr>`).join('');
+  document.getElementById('league').innerHTML = `
+    <thead><tr>
+      <th></th><th class="l">Player</th><th>GP</th><th>NS</th><th title="Days finished outright first">Wins</th><th>Pts</th><th>Form</th>
+    </tr></thead>
+    <tbody>${rows}</tbody>`;
+
+  const top = DATA.league[0], second = DATA.league[1];
+  const mostNS = [...DATA.league].sort((a,b) => b.ns - a.ns)[0];
+  const scale = DATA.rank_points.join('-');
+  document.getElementById('league-blurb').innerHTML =
+    `Every day is worth a fixed set of placement points — ${scale} for 1st through
+     ${DATA.rank_points.length}th, ties splitting the points for the places they jointly
+     occupy — so <b>Pts</b> is just each day's finish added up, and <b>Wins</b>
+     (days spent outright on top) can never run ahead of <b>GP</b> the way a
+     head-to-head record's win count could. Skip a day and it scores a flat 0 —
+     <b>${mostNS.player}</b> has the most of those, ${mostNS.ns} no-shows
+     (<b>NS</b>) this season. Add it up and <b>${top.player}</b> leads the table
+     on ${top.pts} points` +
+    (second ? `, ${(top.pts - second.pts).toFixed(1)} clear of ${second.player}.` : '.') +
+    ` The Weekly Cup below runs alongside it, like a cup competition: one trophy
+     a week, decided on margin against the field rather than the season-long record.`;
+})();
+
+/* ---------- weekly cup ---------- */
+(function cup() {
+  const live = WEEKS[WEEKS.length - 1];
+  const inProgress = DATA.last_date < live.end;
+  const range = w => short(w.start) + ' – ' + short(w.end);
+
+  document.getElementById('cup').innerHTML = Object.entries(cupWins)
+    .sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0]))
+    .map(([name, n]) => `<span class="t ${n === cupTop && n > 0 ? 'lead' : ''} ${n ? '' : 'zero'}"
+        ><span class="dot" style="background:${color(name)}"></span>${name} <b>${n}</b></span>`)
+    .join('');
+
+  document.getElementById('cup-note').textContent =
+    `${WEEKS.length} weeks · Monday to Sunday · ${DATA.week_min}-day minimum to take one`;
+
+  const rows = [...WEEKS].reverse().map(w => {
+    const win = w.standings.filter(r => w.winners.includes(r.player));
+    const rest = w.standings.filter(r => !w.winners.includes(r.player));
+    const up = rest.find(r => r.adj_avg !== null);
+    const isLive = w === live && inProgress;
+    return `<tr class="${isLive ? 'live' : ''}">
+      <td class="l wk">${range(w)}${isLive ? '<span class="live-tag">in progress</span>' : ''}</td>
+      <td class="l win">${win.length
+        ? win.map(r => `<span class="who" style="display:inline-flex"><span class="dot" style="background:${
+            color(r.player)}"></span>${r.player}</span>`).join(' &amp; ')
+        : '<span style="color:var(--ink-3);font-weight:400">no contest</span>'}</td>
+      <td style="color:var(--green)">${win.length && win[0].adj_avg !== null
+        ? (win[0].adj_avg > 0 ? '+' : '') + win[0].adj_avg : '–'}</td>
+      <td class="muted opt">${w.margin !== null ? 'by ' + w.margin : '–'}</td>
+      <td class="l muted opt" style="font-family:'Public Sans',sans-serif">${
+        up ? `${up.player} ${up.adj_avg > 0 ? '+' : ''}${up.adj_avg}` : '–'}</td>
+      <td>${win.length ? win[0].day_wins : '–'}</td>
+      <td class="opt">${w.days}</td>
+      <td class="muted opt">${w.standings.length}</td>
     </tr>`;
-  }).join('')}</tbody>`;
+  }).join('');
 
-document.getElementById('cup').textContent = ED.cup.length
-  ? 'Weeks won: ' + ED.cup.map(([p, n]) => `${p} ${n}`).join(' · ')
-  : 'No week decided yet';
-document.getElementById('board-link').href = ED.board_url;
+  document.getElementById('weeks').innerHTML = `
+    <thead><tr>
+      <th class="l">Week</th><th class="l">Winner</th><th>vs Med</th><th class="opt">Margin</th>
+      <th class="l opt">Runner-up</th><th>Days won</th><th class="opt">Puzzles</th><th class="opt">Played</th>
+    </tr></thead><tbody>${rows}</tbody>`;
+
+  const champs = Object.entries(cupWins).filter(([, n]) => n === cupTop && n > 0).map(([n]) => n);
+  document.getElementById('cup-blurb').innerHTML =
+    `Each week is won on <b>vs Med</b>, not raw average — a week of hard puzzles would otherwise
+     just hand the cup to whoever showed up on the one easy day. A player needs
+     ${DATA.week_min} days in the week to be eligible, so a single lucky appearance can't take it;
+     short weeks lower that bar to their own length.
+     <b>${champs.join(' and ')}</b> ${champs.length > 1 ? 'lead' : 'leads'} the cup with
+     ${cupTop} ${cupTop === 1 ? 'week' : 'weeks'}.` +
+    (inProgress ? ` The ${range(live)} week is still live — ${
+      live.standings.filter(r => r.eligible).length} ${
+      live.standings.filter(r => r.eligible).length === 1 ? 'player is' : 'players are'
+      } already at the ${live.need}-day mark.` : '');
+})();
+
+/* ---------- standings ---------- */
+const VIEWS = [
+  {label: 'Season', days: 0},
+  {label: 'Last 30', days: 30},
+  {label: 'Last 14', days: 14},
+  {label: 'Last 7', days: 7},
+];
+let view = VIEWS[0];
+let qual = [], unqual = [];
+
+function standings(days) {
+  const window = days ? dates.slice(-days) : dates;
+  const inWindow = new Set(window);
+  const daysPlayed = DATA.daily.filter(d => inWindow.has(d.date));
+  const need = days ? Math.max(3, Math.round(window.length * 0.4)) : DATA.qualify;
+
+  const out = P.map(p => {
+    const games = p.series.filter(g => inWindow.has(g.date));
+    const scores = games.map(g => g.score);
+    const eligible = window.filter(d => d >= p.first_seen);
+    let wins = 0, podiums = 0, ranks = [], margins = [];
+    daysPlayed.forEach(d => {
+      if (d.results.length < 2) return;
+      const i = d.results.findIndex(r => r.player === p.player);
+      if (i < 0) return;
+      ranks.push(i + 1);
+      if (d.results[i].adj != null) margins.push(d.results[i].adj);
+      if (d.results[i].score === d.results[0].score) wins++;
+      if (i < 3) podiums++;
+    });
+    const total = scores.reduce((a,b) => a + b, 0);
+    const avg = scores.length ? total / scores.length : 0;
+    const adj = eligible.length ? total / eligible.length : 0;
+    const forfeited = Math.round(avg * (eligible.length - scores.length));
+    const sd = scores.length > 1
+      ? Math.sqrt(scores.reduce((s,v) => s + (v - avg) ** 2, 0) / (scores.length - 1)) : 0;
+    return {
+      ...p, games: scores.length, avg: +avg.toFixed(1), adj: Math.round(adj), forfeited,
+      sd: Math.round(sd),
+      vsmed: margins.length
+        ? +(margins.reduce((a,b) => a + b, 0) / margins.length).toFixed(1) : null,
+      vsmed_games: margins.length,
+      best: scores.length ? Math.max(...scores) : 0,
+      worst: scores.length ? Math.min(...scores) : 0,
+      wins, podiums,
+      avg_rank: ranks.length ? +(ranks.reduce((a,b) => a + b, 0) / ranks.length).toFixed(2) : null,
+      last5: scores.slice(-5),
+      shows: eligible.length ? Math.round(100 * scores.length / eligible.length) : null,
+      window_missed: eligible.length - scores.length,
+      qualified: scores.length >= need,
+      need,
+    };
+  }).filter(p => p.games > 0);
+  // Ranked on margin over the day's median rather than raw average, so a run
+  // of hard puzzles doesn't punish whoever actually showed up for them.
+  out.sort((a,b) => (b.vsmed ?? -1e9) - (a.vsmed ?? -1e9));
+  return out;
+}
+
+function renderStandings() {
+  const all = standings(view.days);
+  qual = all.filter(p => p.qualified);
+  unqual = all.filter(p => !p.qualified);
+  const lo = Math.min(...qual.map(p => p.avg)) - 12, hi = Math.max(...qual.map(p => p.avg)) + 6;
+
+  const row = (p, rank) => {
+    const pct = Math.max(4, 100 * (p.avg - lo) / (hi - lo));
+    const pips = p.last5.map(s => `<b style="background:${band(s)}" title="${fmt(s)}"></b>`).join('');
+    return `<tr data-player="${p.player}" class="${rank === 1 ? 'lead' : ''}">
+      <td class="rank">${rank || '–'}</td>
+      <td class="l"><div class="who"><span class="dot" style="background:${color(p.player)}"></span>${p.player}</div></td>
+      <td><div class="avg">${p.avg}</div><div class="bar"><i style="width:${pct}%;background:${color(p.player)}"></i></div></td>
+      <td class="muted opt">±${p.sd}</td>
+      <td class="opt" title="Total points divided by every puzzle they were around for — no-shows count as zero">${p.adj}</td>
+      <td class="vsmed" title="Average points above or below the median score of everyone who played that day"><b style="color:${
+        p.vsmed == null ? 'var(--ink-3)' : p.vsmed > 0 ? 'var(--green)' : p.vsmed < 0 ? 'var(--red)' : 'inherit'
+      }">${p.vsmed == null ? '–' : (p.vsmed > 0 ? '+' : '') + p.vsmed}</b></td>
+      <td>${p.games}</td>
+      <td>${p.wins}</td>
+      <td class="opt">${p.podiums}</td>
+      <td class="opt">${p.avg_rank ?? '–'}</td>
+      <td class="opt">${fmt(p.best)}</td>
+      <td class="muted opt">${fmt(p.worst)}</td>
+      <td><span class="pips">${pips}</span></td>
+      <td class="opt" style="color:${p.shows !== null && p.shows < 60 ? 'var(--red)' : 'inherit'}">${
+        p.shows === null ? '–' : p.shows + '%'}</td>
+    </tr>`;
+  };
+
+  document.getElementById('standings').innerHTML = `
+    <thead><tr>
+      <th></th><th class="l">Player</th><th>Avg</th><th class="opt">Swing</th><th class="opt">Adj</th>
+      <th>vs Med</th><th>GP</th><th>Won</th><th class="opt">Top 3</th>
+      <th class="opt">Avg finish</th><th class="opt">Best</th><th class="opt">Worst</th>
+      <th>Last 5</th><th class="opt">Shows</th>
+    </tr></thead>
+    <tbody>
+      ${qual.map((p,i) => row(p, i+1)).join('')}
+      ${unqual.length ? `<tr class="divider"><td colspan="14"><span>Not qualified — under ${
+        unqual[0].need} games in this window</span></td></tr>` : ''}
+      ${unqual.map(p => row(p, 0)).join('')}
+    </tbody>`;
+
+  const span = view.days ? `last ${view.days} puzzles` : `all ${DATA.days} puzzles`;
+  document.getElementById('stand-note').textContent = `${span} · ${qual[0]?.need}-game minimum`;
+  const mostWins = [...qual, ...unqual].sort((a,b) => b.wins - a.wins)[0];
+  const gap = qual[1] ? (qual[0].vsmed - qual[1].vsmed).toFixed(1) : '0';
+  const steady = [...qual].sort((a,b) => a.sd - b.sd)[0];
+  document.getElementById('stand-blurb').innerHTML =
+    `The table is ranked on <b>vs Med</b> — how far above or below the median score of everyone
+     who played that day a player lands, averaged out. Some puzzles are simply harder than others,
+     and this measures each result against the field that faced the same one.
+     <b>${qual[0].player}</b> leads it by ${gap} points over ${view.days ? 'this stretch' : 'the season'}
+     (${qual[0].vsmed > 0 ? '+' : ''}${qual[0].vsmed} a day), and
+     <b>${mostWins.player}</b> has taken the most days outright (${mostWins.wins}).
+     <b>${steady.player}</b> is the steadiest — a ±${steady.sd} swing between rounds.
+     By raw average instead it would be ${[...qual].sort((a,b) => b.avg - a.avg)
+       .map((p,i) => `${i ? '' : '<b>'}${p.player}${i ? '' : '</b>'} ${p.avg}`).join(', ')}.
+     <b>Adj</b> divides total points by every puzzle a player was around for, so a no-show scores zero.
+     Last-5 pips run gold 950+, green 880+, yellow 800+, red below.`;
+  if (typeof renderSummary === 'function') renderSummary();
+  if (hot) highlight(hot), highlight(hot);
+}
+
+document.getElementById('tabs').innerHTML = VIEWS.map((v,i) =>
+  `<button type="button" data-view="${i}" aria-pressed="${i === 0}">${v.label}</button>`).join('');
+document.getElementById('tabs').addEventListener('click', e => {
+  const b = e.target.closest('button[data-view]');
+  if (!b) return;
+  view = VIEWS[+b.dataset.view];
+  document.querySelectorAll('#tabs button').forEach(n =>
+    n.setAttribute('aria-pressed', n === b));
+  renderStandings();
+});
+
+/* ---------- the season so far ---------- */
+function story() {
+  const S = standings(0).filter(p => p.qualified);   // narrative ignores small samples
+  const top = S[0], chaser = S[1];
+  const byAdj = [...S].sort((a,b) => b.adj - a.adj);
+  const mostWins = [...S].sort((a,b) => b.wins - a.wins)[0];
+  const W = S.find(p => p.player === 'Wesley');
+  const n = v => `<span class="num">${fmt(v)}</span>`;
+  const bits = [];
+
+  bits.push(`<p><b>${DATA.days} puzzles in</b>, the group has posted ${n(DATA.entries)} scores and the
+    table has settled into something like an order. ${top.player} leads on raw average at ${n(top.avg)},
+    ${(top.avg - chaser.avg).toFixed(1)} clear of ${chaser.player}. The only perfect ${n(1000)} anybody
+    has managed belongs to ${DATA.records.best.player}, on ${short(DATA.records.best.date)}.
+    ${mostWins.player} has the better claim to the trophy cabinet with
+    ${n(mostWins.wins)} days won outright — the difference between being good every day and being the
+    best on the day.</p>`);
+
+  bits.push(`<p>Then there is the other table: the one where a puzzle you skipped counts as a zero.
+    Divide everyone's points by the days they were around for and the standings rearrange completely.
+    ${byAdj[0].player} still leads at ${n(byAdj[0].adj)}. ${byAdj[byAdj.length-1].player} finishes last at
+    ${n(byAdj[byAdj.length-1].adj)}, and it is not close.</p>`);
+
+  if (W) {
+    const missedPts = Math.round(W.avg * W.missed);
+    const gap = byAdj[byAdj.length-2].adj - W.adj;
+    const spread = W.sd - Math.max(...S.filter(p => p.player !== 'Wesley').map(p => p.sd));
+    bits.push(`<div class="pull">Wesley posts a score ${W.attendance_pct}% of the time and talks
+      ${n(100)}% of the time.</div>`);
+    bits.push(`<p><b>Which brings us to Wesley.</b> ${n(W.games)} games from ${n(W.eligible)} puzzles.
+      He has skipped ${n(W.missed)} days — more than anyone else in the group has missed all season —
+      leaving roughly ${n(missedPts)} points on the table. His adjusted average of ${n(W.adj)} sits
+      ${n(gap)} points behind the next-worst player. He once went ${n(W.longest_absence)} straight days
+      without posting, resurfacing on ${short(W.longest_absence_end)} as though nothing had happened.
+      He also holds the lowest score ever recorded in this chat: a ${n(W.worst)} that reads less like a
+      geography quiz and more like a cry for help.</p>`);
+    bits.push(`<p>When he does play, nobody knows which Wesley is coming. His scores swing ±${n(W.sd)},
+      ${n(spread)} points wider than anybody else in the group — the statistical signature of a man
+      guessing and hoping. Every other player has found a level. He has found a range.</p>`);
+    const fakes = DATA.flagged.filter(f => f.player === 'Wesley');
+    if (fakes.length) {
+      bits.push(`<p>And then there is the paperwork. Every legitimate GeoSports share is exactly five
+        pins. Wesley has filed ${n(fakes.length)} that are not: a ${n(6)}-pin all-green masterpiece on
+        ${short(fakes[0].date)} claiming ${n(fakes[0].score)}, and a four-pin entry on
+        ${short(fakes[1].date)} in which the fifth round is represented by an aubergine. A man who
+        cannot be trusted to count to five would like this group to take his scores at face value.</p>`);
+    }
+    bits.push(`<p>In fairness — and the numbers insist on it — he is trending up. ${n(W.streak)} straight
+      days posted and a show rate climbing off the floor. Keep that going and the adjusted table stops
+      being quite so funny. Miss two more and it gets funnier.</p>`);
+  }
+
+  const drift = nowRate - thenRate;
+  bits.push(`<p>Group-wide, participation is ${drift > 0 ? 'improving' : drift < 0 ? 'slipping' : 'flat'}:
+    a ${n(nowRate)}% show rate across the last ${HALF} puzzles against ${n(thenRate)}% in the ${HALF}
+    before. The board is watching. It writes everything down.</p>`);
+
+  document.getElementById('story').innerHTML = bits.join('');
+
+  if (W) {
+    const fakes = DATA.flagged.filter(f => f.player === 'Wesley').length;
+    const rows = [
+      [`${W.attendance_pct}%`, 'Attendance',
+       `Posted ${W.games} of ${W.eligible} puzzles. Everyone else in the group clears 70%.`],
+      [fmt(W.adj), 'Adjusted average',
+       `Dead last. Counting the no-shows as zeros costs him ${fmt(Math.round(W.avg - W.adj))} a day.`],
+      [`±${W.sd}`, 'Volatility',
+       'The widest scoring swing in the chat, by a distance. Consistency is a choice he has not made.'],
+      [fmt(W.worst), 'Career low',
+       'The worst score anyone has posted, ever. Five rounds. A whole map to choose from.'],
+      [`${W.longest_absence}d`, 'Longest silence',
+       `Gone until ${short(W.longest_absence_end)}, then straight back in with opinions.`],
+      [String(fakes), 'Pin lines under review',
+       'Six greens one day, an aubergine the next. Five is the number, Wesley.'],
+    ];
+    document.getElementById('dossier').innerHTML = `
+      <div class="top"><h3>The Wesley Report</h3>
+        <span>Filed ${short(DATA.last_date)} · updated every time he doesn't play</span></div>
+      <ul>${rows.map(([v,l,d]) =>
+        `<li><div class="stat">${v}<small>${l}</small></div><div>${d}</div></li>`).join('')}</ul>`;
+  }
+}
+
+/* ---------- chart ---------- */
+(function chart() {
+  const W = 920, H = 330, m = {t: 14, r: 16, b: 28, l: 44};
+  const iw = W - m.l - m.r, ih = H - m.t - m.b;
+  const win = 5;
+  const series = P.map(p => {
+    const pts = [];
+    p.series.forEach((g, i) => {
+      if (i < win - 1) return;
+      const slice = p.series.slice(i - win + 1, i + 1);
+      pts.push({x: dates.indexOf(g.date), y: slice.reduce((s,v) => s + v.score, 0) / win});
+    });
+    return {player: p.player, pts};
+  }).filter(s => s.pts.length > 1);
+
+  const ys = series.flatMap(s => s.pts.map(p => p.y));
+  const y0 = Math.floor((Math.min(...ys) - 15) / 50) * 50, y1 = Math.ceil((Math.max(...ys) + 15) / 50) * 50;
+  const X = i => m.l + (i / (dates.length - 1)) * iw;
+  const Y = v => m.t + ih - ((v - y0) / (y1 - y0)) * ih;
+
+  let s = '';
+  for (let v = y0; v <= y1; v += 50) {
+    s += `<line class="gridline" x1="${m.l}" x2="${W - m.r}" y1="${Y(v)}" y2="${Y(v)}"
+      ${v === y0 ? 'stroke-width="1.5"' : ''}/>`;
+    s += `<text class="axis" x="${m.l - 9}" y="${Y(v) + 4}" text-anchor="end">${v}</text>`;
+  }
+  let lastMo = '', lastTick = -999;
+  dates.forEach((d, i) => {
+    const mo = d.slice(0, 7);
+    if (mo !== lastMo) {
+      lastMo = mo;
+      lastTick = X(i);
+      s += `<line class="gridline" x1="${X(i)}" x2="${X(i)}" y1="${m.t}" y2="${m.t + ih}"/>`;
+      s += `<text class="axis" x="${X(i) + 5}" y="${H - 9}">${short(d).split(' ')[0]}</text>`;
+    }
+  });
+  if (W - m.r - lastTick > 68) {
+    s += `<text class="axis" x="${W - m.r}" y="${H - 9}" text-anchor="end">${
+      short(dates[dates.length-1])}</text>`;
+  }
+
+  series.forEach(ser => {
+    const d = ser.pts.map((p, i) => `${i ? 'L' : 'M'}${X(p.x).toFixed(1)},${Y(p.y).toFixed(1)}`).join(' ');
+    s += `<path class="series" data-player="${ser.player}" d="${d}" style="stroke:${color(ser.player)}"/>`;
+    const last = ser.pts[ser.pts.length - 1];
+    s += `<circle class="endcap" data-player="${ser.player}" cx="${X(last.x).toFixed(1)}"
+      cy="${Y(last.y).toFixed(1)}" r="3.5" style="fill:${color(ser.player)}"/>`;
+  });
+  document.getElementById('chart').innerHTML = s;
+})();
+
+document.getElementById('legend').innerHTML = P.map(p =>
+  `<button class="chip" type="button" data-player="${p.player}">
+     <span class="dot" style="background:${color(p.player)}"></span>${p.player}
+     <span class="mono" style="opacity:.7">${p.avg}</span>
+   </button>`).join('');
+
+let hot = null;
+function highlight(name) {
+  hot = hot === name ? null : name;
+  const c = document.getElementById('chart');
+  c.classList.toggle('dim', !!hot);
+  c.querySelectorAll('[data-player]').forEach(n => n.classList.toggle('hot', n.dataset.player === hot));
+  document.querySelectorAll('.chip, tbody tr[data-player]').forEach(n =>
+    n.classList.toggle('on', !!hot && n.dataset.player === hot));
+}
+document.addEventListener('click', e => {
+  const t = e.target.closest('[data-player]');
+  if (t && (t.classList.contains('chip') || t.tagName === 'TR')) highlight(t.dataset.player);
+});
+
+/* ---------- roll call ---------- */
+const HALF = Math.min(14, Math.floor(dates.length / 2));
+function trend(p) {
+  const played = new Set(p.series.map(g => g.date));
+  const rate = ds => {
+    const e = ds.filter(d => d >= p.first_seen);
+    return e.length >= 3 ? 100 * e.filter(d => played.has(d)).length / e.length : null;
+  };
+  const now = rate(dates.slice(-HALF)), before = rate(dates.slice(-HALF * 2, -HALF));
+  if (now === null || before === null) return {dir: 'flat', mark: '', text: 'not enough history'};
+  const diff = Math.round(now - before);
+  return {
+    dir: diff > 6 ? 'up' : diff < -6 ? 'down' : 'flat',
+    mark: diff > 6 ? '▲' : diff < -6 ? '▼' : '–',
+    text: `${Math.round(before)}% → ${Math.round(now)}% over the last ${HALF} puzzles`,
+  };
+}
+
+(function attendance() {
+  const winners = {};
+  DATA.daily.forEach(d => {
+    if (d.results.length >= 2) winners[d.date] = d.results[0].player;
+  });
+  let head = '<tr><td class="lbl"></td>';
+  let lastMo = '';
+  dates.forEach(d => {
+    const mo = d.slice(0, 7);
+    head += `<td class="cell mo">${mo !== lastMo ? (lastMo = mo, short(d).split(' ')[0]) : ''}</td>`;
+  });
+  head += '</tr>';
+  const rows = P.map(p => {
+    const played = Object.fromEntries(p.series.map(g => [g.date, g.score]));
+    const cells = dates.map(d => {
+      if (d < p.first_seen) return `<td class="cell"></td>`;
+      if (played[d] !== undefined) {
+        const won = winners[d] === p.player;
+        return `<td class="cell"><i style="background:${won ? 'var(--gold)' : color(p.player)}"
+          title="${short(d)} · ${fmt(played[d])}${won ? ' · won the day' : ''}"></i></td>`;
+      }
+      return `<td class="cell"><i style="border:1px dashed var(--miss)" title="${short(d)} · no show"></i></td>`;
+    }).join('');
+    const tr = trend(p);
+    return `<tr data-player="${p.player}"><td class="lbl">${p.player}
+      <span class="sub">${p.attendance_pct}%</span><span class="trend ${tr.dir}"
+      title="${tr.text}">${tr.mark}</span></td>${cells}</tr>`;
+  }).join('');
+  document.getElementById('attendance').innerHTML = head + rows;
+})();
+
+const ghosts = [...P].sort((a,b) => a.attendance_pct - b.attendance_pct);
+const worst = ghosts[0], best = [...P].filter(p => p.qualified).sort((a,b) => b.attendance_pct - a.attendance_pct)[0];
+const lately = [...P].sort((a,b) =>
+  (a.recent_played / a.recent_eligible) - (b.recent_played / b.recent_eligible))[0];
+document.getElementById('roll-note').textContent =
+  `${P.reduce((s,p) => s + p.missed, 0)} no-shows across the season`;
+document.getElementById('attendance-cards').innerHTML = `
+  <div class="card shame"><h3>Biggest ghost</h3><div class="big">${worst.player}</div>
+    <p>Skipped ${worst.missed} of ${worst.eligible} puzzles — roughly
+       <b>${fmt(Math.round(worst.avg * worst.missed))} points left on the table</b>.
+       Longest silence: ${worst.longest_absence} straight days, ending ${short(worst.longest_absence_end)}.</p></div>
+  <div class="card shame"><h3>Missing lately</h3><div class="big">${lately.player}</div>
+    <p>Only ${lately.recent_played} of the last ${lately.recent_eligible} puzzles. The group notices.</p></div>
+  <div class="card praise"><h3>Never misses</h3><div class="big">${best.player}</div>
+    <p>${best.eligible - best.missed} of ${best.eligible} puzzles posted — ${best.attendance_pct}% attendance.</p></div>
+  <div class="card"><h3>Current streaks</h3>
+    <p class="mono" style="margin-top:9px;font-size:13px;line-height:1.9">${
+      [...P].sort((a,b) => b.streak - a.streak).map(p =>
+        `${p.player} <b style="color:${p.streak ? 'var(--green)' : 'var(--red)'}">${
+          p.streak ? p.streak + 'd' : 'broken'}</b>`).join('<br>')}</p></div>`;
+
+const owing = P.filter(p => p.ghosting > 0);
+const groupRate = ds => {
+  let played = 0, possible = 0;
+  P.forEach(p => {
+    const e = ds.filter(d => d >= p.first_seen);
+    const has = new Set(p.series.map(g => g.date));
+    possible += e.length;
+    played += e.filter(d => has.has(d)).length;
+  });
+  return possible ? Math.round(100 * played / possible) : 0;
+};
+const nowRate = groupRate(dates.slice(-HALF)), thenRate = groupRate(dates.slice(-HALF * 2, -HALF));
+const drift = nowRate - thenRate;
+const driftLine = ` Group show rate is <b class="${drift > 0 ? 'up' : drift < 0 ? 'down' : 'flat'}">${
+  nowRate}%</b> over the last ${HALF} puzzles, ${
+  drift === 0 ? 'flat against' : (drift > 0 ? 'up from ' : 'down from ') + thenRate + '% in'} the ${HALF} before.`;
+
+document.getElementById('verdict').innerHTML = (owing.length
+  ? `<b>Currently owing a score:</b> ${owing.map(p =>
+      `${p.player} (${p.ghosting} day${p.ghosting > 1 ? 's' : ''})`).join(', ')}. Everyone else has posted
+      for the latest puzzle.`
+  : `<b>Full house.</b> Every player posted a score for ${short(DATA.last_date)}. Don't get comfortable.`)
+  + driftLine;
+
+/* ---------- month by month ---------- */
+(function months() {
+  const groups = {};
+  DATA.daily.forEach(d => (groups[d.date.slice(0, 7)] ||= []).push(d));
+  const label = m => new Date(m + '-15T12:00:00').toLocaleDateString('en-US', {month: 'long'});
+
+  const rows = Object.entries(groups).map(([m, days]) => {
+    const acc = {};
+    days.forEach(d => d.results.forEach(r => {
+      const s = acc[r.player] ||= {scores: [], wins: 0};
+      s.scores.push(r.score);
+      if (d.results.length > 1 && r.score === d.results[0].score) s.wins++;
+    }));
+    const need = Math.max(2, Math.round(days.length * 0.4));
+    const ranked = Object.entries(acc).map(([player, s]) => ({
+      player, n: s.scores.length, wins: s.wins, best: Math.max(...s.scores),
+      avg: +(s.scores.reduce((a,b) => a + b, 0) / s.scores.length).toFixed(1),
+    }));
+    const champ = ranked.filter(r => r.n >= need).sort((a,b) => b.avg - a.avg)[0];
+    const winner = [...ranked].sort((a,b) => b.wins - a.wins)[0];
+    const best = [...ranked].sort((a,b) => b.best - a.best)[0];
+    const ghost = P.map(p => {
+      const eligible = days.filter(d => d.date >= p.first_seen).length;
+      const played = acc[p.player]?.scores.length || 0;
+      return {player: p.player, eligible, missed: eligible - played,
+              pct: eligible ? Math.round(100 * played / eligible) : null};
+    }).filter(g => g.pct !== null && g.eligible >= 3).sort((a,b) => a.pct - b.pct)[0];
+
+    const cell = (name, detail) => `<td><div class="who" style="justify-content:flex-end">
+      <span class="dot" style="background:${color(name)}"></span>${name}</div>
+      <div class="sub">${detail}</div></td>`;
+
+    return `<tr>
+      <td class="l" style="font-family:'Public Sans';font-weight:600">${label(m)}
+        <div class="sub">${days.length} puzzles</div></td>
+      ${champ ? cell(champ.player, `${champ.avg} avg`) : '<td class="muted">–</td>'}
+      ${cell(winner.player, `${winner.wins} day${winner.wins === 1 ? '' : 's'} won`)}
+      ${cell(best.player, fmt(best.best))}
+      ${ghost ? cell(ghost.player, `${ghost.pct}% · missed ${ghost.missed}`) : '<td class="muted">–</td>'}
+    </tr>`;
+  }).reverse();
+
+  document.getElementById('months').innerHTML = `
+    <thead><tr><th class="l">Month</th><th>Champion</th><th>Most days won</th>
+      <th>Best single score</th><th>Ghost of the month</th></tr></thead>
+    <tbody>${rows.join('')}</tbody>`;
+})();
+
+/* ---------- round quality ---------- */
+document.getElementById('trophy-date').textContent = short(DATA.trophy_era);
+document.getElementById('pinval').textContent =
+  Object.entries(DATA.pin_values).map(([k,v]) => `${k} ≈ ${v}`).join('   ');
+const PIN = {'🏆':'var(--gold)', '🟢':'var(--green)', '🟡':'var(--yellow)', '🔴':'var(--red)'};
+document.getElementById('quality').innerHTML = P.map(p => {
+  const segs = Object.entries(p.pin_pct).filter(([,v]) => v > 0).map(([k,v]) =>
+    `<i class="${k === '🟡' || k === '🏆' ? 'light' : ''}" style="width:${v}%;background:${PIN[k]}"
+       title="${k} ${v}%">${v >= 12 ? Math.round(v) + '%' : ''}</i>`).join('');
+  return `<div class="qrow" data-player="${p.player}"><div class="qname">${p.player}</div>
+    <div class="qbar">${segs}</div></div>`;
+}).join('');
+const era = [...P].sort((a,b) => b.era_trophy_pct - a.era_trophy_pct);
+document.getElementById('perfect').innerHTML = `
+  <thead><tr><th class="l">Perfect rounds since ${short(DATA.trophy_era)}</th><th>Games</th>
+    <th>Trophies</th><th>Per round</th><th>Red rounds</th></tr></thead>
+  <tbody>${era.map(p => `<tr data-player="${p.player}">
+    <td class="l"><div class="who"><span class="dot" style="background:${color(p.player)}"></span>${p.player}</div></td>
+    <td>${p.era_games}</td><td>${p.era_trophies}</td>
+    <td>${p.era_trophy_pct}%</td>
+    <td class="muted">${p.pins['🔴']}</td></tr>`).join('')}</tbody>`;
+
+/* ---------- head to head ---------- */
+(function h2h() {
+  const names = P.map(p => p.player);
+  let s = `<thead><tr><th class="l">Row wins vs. column</th>${
+    names.map(n => `<th>${n}</th>`).join('')}</tr></thead><tbody>`;
+  names.forEach(a => {
+    s += `<tr data-player="${a}"><td class="l"><div class="who">
+      <span class="dot" style="background:${color(a)}"></span>${a}</div></td>`;
+    names.forEach(b => {
+      if (a === b) { s += `<td class="self">—</td>`; return; }
+      const r = DATA.h2h[`${a}|${b}`];
+      const n = r.w + r.l + r.t;
+      const rate = n ? r.w / n : 0;
+      const strong = n >= 10;
+      s += `<td style="background:${strong ? `color-mix(in srgb, var(--accent) ${
+        Math.round(Math.abs(rate - .5) * 2 * 26)}%, transparent)` : 'transparent'}"
+        title="${n} shared days">
+        <b style="color:${strong && rate > .5 ? 'var(--ink)' : 'var(--ink-2)'}">${r.w}–${r.l}</b></td>`;
+    });
+    s += '</tr>';
+  });
+  document.getElementById('h2h').innerHTML = s + '</tbody>';
+})();
+
+/* ---------- records ---------- */
+const R = DATA.records;
+document.getElementById('records').innerHTML = `
+  <div class="card"><h3>Best single day</h3><div class="big">${fmt(R.best.score)}</div>
+    <p>${R.best.player} · ${short(R.best.date)} · ${R.best.pins}</p></div>
+  <div class="card"><h3>Worst single day</h3><div class="big">${fmt(R.worst.score)}</div>
+    <p>${R.worst.player} · ${short(R.worst.date)} · ${R.worst.pins}</p></div>
+  <div class="card"><h3>Biggest blowout</h3><div class="big">${R.blowout.margin}</div>
+    <p>${R.blowout.top.player} ${fmt(R.blowout.top.score)} over ${R.blowout.bottom.player}
+       ${fmt(R.blowout.bottom.score)} · ${short(R.blowout.date)}</p></div>
+  <div class="card"><h3>Tightest day</h3><div class="big">${R.tightest.spread}</div>
+    <p>Points between first and last of ${R.tightest.n} players · ${short(R.tightest.date)}</p></div>`;
+
+/* ---------- receipts ---------- */
+document.getElementById('receipts').innerHTML = DATA.flagged.map(f => `
+  <div><span class="tag">${f.pins.length} pins, not 5 · ${f.player}</span>
+  <div class="receipt">GeoSports · ${short(f.date)}
+${fmt(f.score)} / 1,000
+${f.pins}</div></div>`).join('') || '<p class="blurb">Nothing to see here. Suspiciously.</p>';
+
+/* ---------- daily log ---------- */
+const logEl = document.getElementById('log');
+let full = false;
+function renderLog() {
+  const days = full ? [...DATA.daily].reverse() : [...DATA.daily].reverse().slice(0, 14);
+  logEl.innerHTML = days.map(d => {
+    const played = new Set(d.results.map(r => r.player));
+    const missing = P.filter(p => p.first_seen <= d.date && !played.has(p.player)).map(p => p.player);
+    const top = d.results[0].score;
+    return `<div class="day"><div class="d">${short(d.date)}</div><div>
+      <div class="entries">${d.results.map(r => `<span class="entry ${r.score === top && d.results.length > 1 ? 'w' : ''}">
+        <span class="dot" style="background:${color(r.player)}"></span>${r.player}
+        <span class="s">${fmt(r.score)}</span><span class="p">${r.pins}</span></span>`).join('')}</div>
+      ${missing.length ? `<div class="absent">No-show: ${missing.join(', ')}</div>` : ''}
+    </div></div>`;
+  }).join('');
+  document.getElementById('log-note').textContent =
+    full ? `all ${DATA.days} puzzles` : `most recent 14 of ${DATA.days}`;
+}
+renderLog();
+document.getElementById('more').addEventListener('click', e => {
+  full = !full;
+  e.target.textContent = full ? 'Show recent only' : 'Show every day';
+  renderLog();
+});
+
+/* ---------- chat-ready summary ---------- */
+const medal = ['1.', '2.', '3.', '4.', '5.', '6.'];
+let summary = '';
+function renderSummary() {
+  const cupLine = Object.entries(cupWins).sort((a,b) => b[1] - a[1])
+    .filter(([, n]) => n).map(([p, n]) => `${p} ${n}`).join(' · ');
+  const live = WEEKS[WEEKS.length - 1];
+  summary = [
+  `PIN BOARD - ${short(DATA.last_date)}`,
+  view.days ? `Last ${view.days} puzzles` : `${DATA.days} puzzles, ${DATA.entries} scores`,
+  '',
+  `This week (${short(live.start)}-${short(live.end)}): ${
+    live.winners.length ? live.winners.join(' & ') + ' up ' +
+      (live.standings.find(r => r.player === live.winners[0]).adj_avg > 0 ? '+' : '') +
+      live.standings.find(r => r.player === live.winners[0]).adj_avg
+    : 'still open'}`,
+  `Weekly cup: ${cupLine}`,
+  '',
+  ...qual.map((p, i) => `${medal[i]} ${p.player} ${p.avg} avg (${p.games} GP, ${p.wins}W, ${p.adj} adj)`),
+  ...unqual.map(p => `-  ${p.player} ${p.avg} avg (${p.games} GP, needs ${p.need})`),
+  '',
+  owing.length
+    ? `Owes a score: ${owing.map(p => `${p.player} (${p.ghosting}d)`).join(', ')}`
+    : `Everyone posted for ${short(DATA.last_date)}.`,
+  `Season ghost: ${worst.player}, ${worst.attendance_pct}% attendance (${worst.missed} missed)`,
+  `Best attendance: ${best.player}, ${best.attendance_pct}%`,
+  '',
+  `Full board -> ${BOARD_URL}`,
+  ].join('\n');
+  document.getElementById('paste').textContent = summary;
+}
+renderStandings();   // also fills the summary; runs here so its data is initialised
+story();             // reads the attendance figures defined above
+const pasteEl = document.getElementById('paste');
+pasteEl.addEventListener('click', () => {
+  const r = document.createRange();
+  r.selectNodeContents(pasteEl);
+  const sel = getSelection();
+  sel.removeAllRanges();
+  sel.addRange(r);
+});
+document.getElementById('copy').addEventListener('click', async e => {
+  try {
+    await navigator.clipboard.writeText(summary);
+    e.target.textContent = 'Copied';
+  } catch {
+    pasteEl.click();
+    e.target.textContent = 'Selected — press Cmd+C';
+  }
+  setTimeout(() => { e.target.textContent = 'Copy to clipboard'; }, 2500);
+});
+
+document.getElementById('foot').textContent =
+  `Built from ${DATA.entries} shared results in the group chat, ${short(DATA.first_date)} to ${short(DATA.last_date)} 2026. ` +
+  `Last updated ${new Date(DATA.generated).toLocaleString('en-US', {dateStyle:'medium', timeStyle:'short'})}.`;
 </script>
 
 </html>

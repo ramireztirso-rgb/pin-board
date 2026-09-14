@@ -1,0 +1,170 @@
+<!doctype html>
+<html lang="en">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="light dark">
+<title>Pin Board Weekly</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=IBM+Plex+Mono:wght@400;500;600&family=Public+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap">
+<style>
+/* Same palette and type as the full board (template.html) on purpose: this is
+   the page people actually get sent, so it should feel like the same product
+   as the one it links out to, not a separate brand. */
+:root{
+  --ground:#E9EBE6; --panel:#FCFDFB; --panel-2:#F0F2ED; --sunk:#DFE2DB;
+  --ink:#14181C; --ink-2:#464D55; --ink-3:#727A83; --rule:#D2D6CE; --rule-2:#C2C7BC;
+  --accent:#3646C6; --accent-soft:rgba(54,70,198,.10);
+  --gold:#A8781A; --green:#2C8450; --yellow:#B9932A; --red:#B23C31;
+  --miss:#C4B0AB; --miss-bg:rgba(178,60,49,.10);
+  --p-Andrew:#3646C6; --p-Andy:#0A8B99; --p-Matt:#7B41C0; --p-Migs:#A9631F; --p-Tirso:#C93472; --p-Wesley:#1E8A65;
+}
+:root:not([data-theme="light"]) { color-scheme: light dark; }
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --ground:#0F1216; --panel:#171B20; --panel-2:#1D2228; --sunk:#101418;
+    --ink:#E7EAE4; --ink-2:#A7AFB8; --ink-3:#79828C; --rule:#282E35; --rule-2:#343B43;
+    --accent:#8497FF; --accent-soft:rgba(132,151,255,.14);
+    --gold:#DCAE4C; --green:#4EBB77; --yellow:#DEC456; --red:#E06A5F;
+    --miss:#4A3B39; --miss-bg:rgba(224,106,95,.10);
+    --p-Andrew:#8497FF; --p-Andy:#2FC0CD; --p-Matt:#B387EE; --p-Migs:#DD9F58; --p-Tirso:#F0709F; --p-Wesley:#4BCE9E;
+  }
+}
+:root[data-theme="dark"]{
+  --ground:#0F1216; --panel:#171B20; --panel-2:#1D2228; --sunk:#101418;
+  --ink:#E7EAE4; --ink-2:#A7AFB8; --ink-3:#79828C; --rule:#282E35; --rule-2:#343B43;
+  --accent:#8497FF; --accent-soft:rgba(132,151,255,.14);
+  --gold:#DCAE4C; --green:#4EBB77; --yellow:#DEC456; --red:#E06A5F;
+  --miss:#4A3B39; --miss-bg:rgba(224,106,95,.10);
+  --p-Andrew:#8497FF; --p-Andy:#2FC0CD; --p-Matt:#B387EE; --p-Migs:#DD9F58; --p-Tirso:#F0709F; --p-Wesley:#4BCE9E;
+}
+
+*,*::before,*::after{box-sizing:border-box}
+body{background:var(--ground); color:var(--ink);
+  font-family:"Public Sans","Helvetica Neue",Helvetica,Arial,sans-serif; font-size:15px; line-height:1.55;
+  -webkit-font-smoothing:antialiased;}
+.mono{font-family:"IBM Plex Mono",ui-monospace,Menlo,monospace; font-variant-numeric:tabular-nums}
+.wrap{max-width:480px; margin:0 auto; padding:28px 18px 56px}
+:focus-visible{outline:2px solid var(--accent); outline-offset:2px; border-radius:2px}
+
+.eyebrow{display:flex; align-items:center; gap:9px; flex-wrap:wrap;
+  font-size:11px; font-weight:600; letter-spacing:.14em; text-transform:uppercase; color:var(--ink-3)}
+.pill{font-size:10px; font-weight:700; letter-spacing:.1em; padding:3px 9px; border-radius:999px}
+.pill.live{background:var(--accent-soft); color:var(--accent)}
+.pill.final{background:var(--sunk); color:var(--ink-2)}
+
+.wordmark{font-family:"Archivo Black","Archivo",Impact,sans-serif; font-weight:400;
+  font-size:clamp(30px,9vw,42px); line-height:.95; letter-spacing:-.02em; text-transform:uppercase;
+  margin:10px 0 0; text-wrap:balance}
+
+.headline{margin:14px 0 0; font-size:17px; color:var(--ink-2); max-width:44ch}
+.headline b{color:var(--ink); font-weight:700}
+
+table{width:100%; border-collapse:collapse; margin:24px 0 0; table-layout:fixed}
+th{font-size:9.5px; font-weight:600; letter-spacing:.08em; text-transform:uppercase; color:var(--ink-3);
+  text-align:center; padding:0 2px 8px; border-bottom:1px solid var(--rule-2)}
+th.l{text-align:left}
+th.net{text-align:right}
+td{padding:9px 2px; border-bottom:1px solid var(--rule); vertical-align:middle}
+tr:last-child td{border-bottom:none}
+tr.won{background:linear-gradient(90deg,var(--panel-2),transparent 85%)}
+
+.rank{font-family:"IBM Plex Mono",monospace; font-size:13px; color:var(--ink-3);
+  width:1%; padding-right:2px; text-align:center}
+.who{display:flex; align-items:center; gap:7px; white-space:nowrap}
+.dot{width:8px; height:8px; border-radius:50%; flex:none}
+.who b{font-weight:600; font-size:14px}
+
+.sq{width:100%; max-width:26px; aspect-ratio:1/1; margin:0 auto; border-radius:3px;
+  display:grid; place-content:center; font-family:"IBM Plex Mono",monospace;
+  font-size:9px; font-weight:600; color:var(--panel)}
+.sq.miss{background:var(--miss-bg); color:var(--red); border:1px dashed var(--rule-2)}
+.sq.none{background:transparent; border:1px solid var(--rule)}
+
+.net{font-family:"IBM Plex Mono",monospace; font-weight:700; font-size:14.5px;
+  text-align:right; white-space:nowrap}
+.net.up{color:var(--green)} .net.down{color:var(--red)} .net.flat{color:var(--ink-3)}
+
+.note{margin:16px 0 0; font-size:12.5px; color:var(--ink-3); max-width:46ch}
+.foot{display:flex; flex-wrap:wrap; align-items:center; gap:8px 14px; margin:28px 0 0;
+  padding-top:16px; border-top:1px solid var(--rule); font-size:13px; color:var(--ink-2)}
+.foot a{color:var(--accent); font-weight:600; text-decoration:none; margin-left:auto}
+.foot a:hover{text-decoration:underline}
+
+@media (max-width:380px){
+  .wrap{padding:22px 12px 44px}
+  .who b{font-size:13px}
+  td{padding:8px 1px}
+  .net{font-size:13px}
+}
+</style>
+
+<div class="wrap">
+  <p class="eyebrow"><span id="wk-no"></span> <span id="wk-range"></span>
+    <span class="pill" id="wk-pill"></span></p>
+  <h1 class="wordmark">This Week</h1>
+  <p class="headline" id="headline"></p>
+
+  <table id="board"></table>
+  <p class="note">Net is each day's score measured against that day's median,
+    averaged out — so a run of hard puzzles doesn't flatter whoever showed up.</p>
+
+  <div class="foot">
+    <span id="cup"></span>
+    <a id="board-link" href="#">Full stats →</a>
+  </div>
+</div>
+
+<script>
+const ED = {"generated":"2026-09-13T21:12","number":2,"finished":false,"week":{"week":"2026-W37","start":"2026-09-07","end":"2026-09-13","days":7,"dates":["2026-09-07","2026-09-08","2026-09-09","2026-09-10","2026-09-11","2026-09-12","2026-09-13"],"need":3,"winners":["Andy"],"margin":17.5,"standings":[{"player":"Andy","played":6,"dates":["2026-09-07","2026-09-09","2026-09-10","2026-09-11","2026-09-12","2026-09-13"],"avg":900.5,"best":987,"adj_avg":20.9,"day_wins":4,"eligible":true},{"player":"Andrew","played":7,"dates":["2026-09-07","2026-09-08","2026-09-09","2026-09-10","2026-09-11","2026-09-12","2026-09-13"],"avg":886.6,"best":936,"adj_avg":3.4,"day_wins":1,"eligible":true},{"player":"Migs","played":7,"dates":["2026-09-07","2026-09-08","2026-09-09","2026-09-10","2026-09-11","2026-09-12","2026-09-13"],"avg":875.1,"best":943,"adj_avg":-8.1,"day_wins":0,"eligible":true},{"player":"Tirso","played":7,"dates":["2026-09-07","2026-09-08","2026-09-09","2026-09-10","2026-09-11","2026-09-12","2026-09-13"],"avg":874,"best":982,"adj_avg":-9.2,"day_wins":2,"eligible":true},{"player":"Matt","played":4,"dates":["2026-09-07","2026-09-09","2026-09-10","2026-09-11"],"avg":848.5,"best":977,"adj_avg":-33.9,"day_wins":0,"eligible":true},{"player":"Wesley","played":5,"dates":["2026-09-07","2026-09-09","2026-09-10","2026-09-11","2026-09-12"],"avg":836.2,"best":932,"adj_avg":-41.9,"day_wins":0,"eligible":true}],"days_list":["2026-09-07","2026-09-08","2026-09-09","2026-09-10","2026-09-11","2026-09-12","2026-09-13"],"grid":{"Andy":[{"date":"2026-09-07","state":"played","score":908,"rank":1},{"date":"2026-09-08","state":"missed"},{"date":"2026-09-09","state":"played","score":987,"rank":1},{"date":"2026-09-10","state":"played","score":814,"rank":5},{"date":"2026-09-11","state":"played","score":912,"rank":1},{"date":"2026-09-12","state":"played","score":943,"rank":1},{"date":"2026-09-13","state":"played","score":839,"rank":4}],"Andrew":[{"date":"2026-09-07","state":"played","score":868,"rank":4},{"date":"2026-09-08","state":"played","score":834,"rank":3},{"date":"2026-09-09","state":"played","score":936,"rank":5},{"date":"2026-09-10","state":"played","score":841,"rank":4},{"date":"2026-09-11","state":"played","score":909,"rank":2},{"date":"2026-09-12","state":"played","score":900,"rank":2},{"date":"2026-09-13","state":"played","score":918,"rank":1}],"Migs":[{"date":"2026-09-07","state":"played","score":891,"rank":3},{"date":"2026-09-08","state":"played","score":905,"rank":2},{"date":"2026-09-09","state":"played","score":943,"rank":4},{"date":"2026-09-10","state":"played","score":807,"rank":6},{"date":"2026-09-11","state":"played","score":808,"rank":4},{"date":"2026-09-12","state":"played","score":861,"rank":3},{"date":"2026-09-13","state":"played","score":911,"rank":2}],"Tirso":[{"date":"2026-09-07","state":"played","score":763,"rank":6},{"date":"2026-09-08","state":"played","score":929,"rank":1},{"date":"2026-09-09","state":"played","score":982,"rank":2},{"date":"2026-09-10","state":"played","score":914,"rank":1},{"date":"2026-09-11","state":"played","score":868,"rank":3},{"date":"2026-09-12","state":"played","score":799,"rank":4},{"date":"2026-09-13","state":"played","score":863,"rank":3}],"Matt":[{"date":"2026-09-07","state":"played","score":809,"rank":5},{"date":"2026-09-08","state":"missed"},{"date":"2026-09-09","state":"played","score":977,"rank":3},{"date":"2026-09-10","state":"played","score":876,"rank":2},{"date":"2026-09-11","state":"played","score":732,"rank":5},{"date":"2026-09-12","state":"missed"},{"date":"2026-09-13","state":"missed"}],"Wesley":[{"date":"2026-09-07","state":"played","score":905,"rank":2},{"date":"2026-09-08","state":"missed"},{"date":"2026-09-09","state":"played","score":932,"rank":6},{"date":"2026-09-10","state":"played","score":863,"rank":3},{"date":"2026-09-11","state":"played","score":713,"rank":6},{"date":"2026-09-12","state":"played","score":768,"rank":5},{"date":"2026-09-13","state":"missed"}]}},"headline":"Andy leads Week 2, +20.9 a day ahead of the median.","cup":[["Migs",1]],"season":{"leader":"Andy","adj":15.6},"board_url":"./index.html","weekly_url":"https://ramireztirso-rgb.github.io/pin-board/weekly.html"};
+const W = ED.week;
+
+const fmt = n => n.toLocaleString('en-US');
+const sign = n => (n > 0 ? '+' : '') + n;
+const short = d => new Date(d + 'T12:00:00').toLocaleDateString('en-US', {month:'short', day:'numeric'});
+const dayLetter = d => new Date(d + 'T12:00:00').toLocaleDateString('en-US', {weekday:'short'}).slice(0,2);
+const color = n => `var(--p-${n}, var(--accent))`;
+const band = s => s >= 950 ? 'var(--gold)' : s >= 880 ? 'var(--green)' : s >= 800 ? 'var(--yellow)' : 'var(--red)';
+
+document.getElementById('wk-no').textContent = `Week ${ED.number}`;
+document.getElementById('wk-range').textContent = `${short(W.start)} – ${short(W.end)}`;
+document.getElementById('wk-pill').textContent = ED.finished ? 'Final' : 'In progress';
+document.getElementById('wk-pill').classList.add(ED.finished ? 'final' : 'live');
+document.getElementById('headline').innerHTML =
+  ED.headline.replace(/^(\S+(?:\s&\s\S+)?)/, '<b>$1</b>');
+
+/* standings arrive pre-sorted by adjusted score from stats.py */
+document.getElementById('board').innerHTML = `
+  <colgroup><col style="width:22px"><col style="width:30%">
+    ${W.days_list.map(() => '<col>').join('')}<col style="width:52px"></colgroup>
+  <thead><tr>
+    <th></th><th class="l">Player</th>
+    ${W.days_list.map(d => `<th>${dayLetter(d)}</th>`).join('')}
+    <th class="net">Net</th>
+  </tr></thead>
+  <tbody>${W.standings.map((r, i) => {
+    const cells = W.grid[r.player].map(c => {
+      if (c.state === 'none') return `<td class="cell"><div class="sq none"></div></td>`;
+      if (c.state === 'missed')
+        return `<td class="cell"><div class="sq miss" title="${short(c.date)}: no show">×</div></td>`;
+      return `<td class="cell"><div class="sq" style="background:${band(c.score)}"
+        title="${short(c.date)}: ${fmt(c.score)}, finished ${c.rank}">${c.rank}</div></td>`;
+    }).join('');
+    const m = r.adj_avg;
+    const cls = m === null ? 'flat' : m > 0 ? 'up' : m < 0 ? 'down' : 'flat';
+    return `<tr class="${W.winners.includes(r.player) ? 'won' : ''}">
+      <td class="rank">${i + 1}</td>
+      <td><div class="who"><span class="dot" style="background:${color(r.player)}"></span>
+        <b>${r.player}</b></div></td>
+      ${cells}
+      <td class="net ${cls}">${m === null ? '–' : sign(m)}</td>
+    </tr>`;
+  }).join('')}</tbody>`;
+
+document.getElementById('cup').textContent = ED.cup.length
+  ? 'Weeks won: ' + ED.cup.map(([p, n]) => `${p} ${n}`).join(' · ')
+  : 'No week decided yet';
+document.getElementById('board-link').href = ED.board_url;
+</script>
+
+</html>
